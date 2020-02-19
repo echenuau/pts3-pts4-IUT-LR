@@ -21,6 +21,7 @@ Cette branche permet aux autres membres de l’équipe de développer des foncti
 Avant de commencer vous devez vous situer dans la branche **develop**.
 Pour vous y positionner, utilisez la commande : 
 `git checkout develop`
+
 Maintenant, je peux commencer à coder...
 
 Note : *Quand un item est clos (feature, release, hotfix) alors la branche est supprimée (définitivement dans le cas du hotfix)*
@@ -32,10 +33,11 @@ Si ma feature existe déjà et n'est pas fermée, je me repositionne dessus si j
 
 Pour créer une feature : 
 `git flow feature start nom`
+
 Pour clore une feature : 
 `git flow feature finish nom`
 
-Loersque la feature est fermée (finish), elle est merge sur develop et supprimée.
+Lorsque la feature est fermée (finish), elle est merge sur develop et supprimée.
 Je suis rebasculé sur la branche **develop**.
 
 ### Release
@@ -44,6 +46,7 @@ La release contiendra l'ensemble des features créées durant le sprint.
 
 Pour créer une release : 
 `git flow release start nom_version`
+
 Pour clore une release : 
 `git flow release finish nom_version`
 
@@ -56,6 +59,7 @@ Je suis rebasculé sur la branche **develop**.
 Je créé un hotfix s'il y a un bug **urgent** à régler sur une fonctionnalité déjà en production et nécessitée par le client dans l'immédiat. Cela a peu de chances de nous arriver.
 Pour créer un hotfix : 
 `git flow hotfix start nom`
+
 Pour clore un hotfix : 
 `git flow hotfix finish nom_version`
 
