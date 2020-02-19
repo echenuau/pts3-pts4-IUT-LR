@@ -20,6 +20,7 @@ Cette branche permet aux autres membres de l’équipe de développer des foncti
 ## Commandes git flow
 Avant de commencer vous devez vous situer dans la branche **develop**.
 Pour vous y positionner, utilisez la commande : 
+
 `git checkout develop`
 
 Maintenant, je peux commencer à coder...
@@ -29,25 +30,30 @@ Note : *Quand un item est clos (feature, release, hotfix) alors la branche est s
 ### Feature
 Je créé une feature SI j'ai une fonctionnalité à développer.
 Si ma feature existe déjà et n'est pas fermée, je me repositionne dessus si je n'y suis plus :
+
 `git checkout feature/nom`
 
 Pour créer une feature : 
+
 `git flow feature start nom`
 
 Pour clore une feature : 
+
 `git flow feature finish nom`
 
 Lorsque la feature est fermée (finish), elle est merge sur develop et supprimée.
 Je suis rebasculé sur la branche **develop**.
 
 ### Release
-**Une unique personne** crééra les releases *en fin de sprint* et sera chargée de consulter les autres membres de l'équipe pour les possibles merges dans le code.
+8**Une unique personne** crééra les releases *en fin de sprint* et sera chargée de consulter les autres membres de l'équipe pour les possibles merges dans le code.
 La release contiendra l'ensemble des features créées durant le sprint.
 
 Pour créer une release : 
+
 `git flow release start nom_version`
 
 Pour clore une release : 
+
 `git flow release finish nom_version`
 
 *Une fois qu’on met fin à la release, si on ne l’a pas indiqué, un tag sera demandé pour décrire le merge de la release et également un message pour indiquer l’importance du merge.*
@@ -58,9 +64,11 @@ Je suis rebasculé sur la branche **develop**.
 ### Hotfix
 Je créé un hotfix s'il y a un bug **urgent** à régler sur une fonctionnalité déjà en production et nécessitée par le client dans l'immédiat. Cela a peu de chances de nous arriver.
 Pour créer un hotfix : 
+
 `git flow hotfix start nom`
 
 Pour clore un hotfix : 
+
 `git flow hotfix finish nom_version`
 
 Lorsque la branche hotfix est fermée (finish), elle est mergée sur master et supprimée définitivement.
