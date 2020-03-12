@@ -3,19 +3,35 @@ from os import path
 import threading
 import time
 import re
+from Database import Database
 
 class SensorProcessing:
     def __init__(self,pathConfig,analogDigitalConverter):
-        self.analogDigitalConverter = analogDigitalConverter
+        
         self.pathConfig = pathConfig + '/config.data'
         
         if(not path.exists(self.pathConfig)):
             self.initFileConfiguration()
         
+        self.analogDigitalConverter = analogDigitalConverter
+        
+        host = self.getPropertyInFileConfiguration("Host")
+        dbName = self.getPropertyInFileConfiguration("Database\ name")
+        login = self.getPropertyInFileConfiguration("Login")
+        password = self.getPropertyInFileConfiguration("Password")
+        port = self.getPropertyInFileConfiguration("Port")
+        
+        self.database = Database(host,dbName,login,password,port)
+        
+        
     def startSession(self):
+        surname = self.getPropertyInFileConfiguration("Surname")
+        name = self.getPropertyInFileConfiguration("Name")
         #insertClient() of Database class
+        self.database.insertClient(surname,name)
         
         #startSession() of Database class
+        self.database.startSession()
         
         #startThread
         self.thread = threading.Thread(target=self.loop , args=({0.5}))
@@ -27,13 +43,15 @@ class SensorProcessing:
         self.thread.join()
         
         #endSession() of Database class
+        self.database.endSession()
         
     # Define a function for the thread
     def loop(self,delay):
         t = threading.currentThread()
         while getattr(t, "do_run", True):
             print("Wheels degree : "+str(self.getAngle()))
-            #insertResult(self.getAngle()) of Database class
+            #insertResults(self.getAngle()) of Database class
+            self.database.insertResults(self.getAngle())
             time.sleep(delay)
             
     def getAngle(self):
@@ -136,6 +154,11 @@ class SensorProcessing:
         file.write("# The host of database :\n")
         #   Host: value
         file.write("Host: value\n\n")
+        
+        #   # The port of database :
+        file.write("# The port of database :\n")
+        #   Port: value
+        file.write("Port: value\n\n")
 
         #   # The name of database user :
         file.write("# The name of database user :\n")
@@ -145,6 +168,11 @@ class SensorProcessing:
         #   # The password of database user :
         file.write("# The password of database user :\n")
         #   Password: value
-        file.write("Password: value\n")
+        file.write("Password: value\n\n")
+        
+        #   # The database name :
+        file.write("# The database name :\n")
+        #   Database name: value
+        file.write("Database name: value\n")
 
         file.close() 
