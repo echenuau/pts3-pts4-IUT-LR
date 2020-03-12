@@ -12,31 +12,37 @@
 # Potentiometer reference voltage :
 Reference: 4.094
 # Maximum number of turns that the potentiometer can make :
-Turns: 1.5
+Turns: 1
 # Multiplication ratio between the motor and the potentiometer :
 Ratio M&P: 3
 # Multiplication ratio between the motor and wheels :
-Ratio M&W: 2.6
+Ratio M&W: 3.6
 
 # ------------------------
 # | Customer information |
 # ------------------------
 
 # The customer's name :
-Name: value
+Name: ROUDOT
 
 # The customer's surname :
-Surname: value
+Surname: Cyril
 
 # ------------------------
 # | Database information |
 # ------------------------
 
 # The host of database :
-Host: value
+Host: postgresql-pts4.alwaysdata.net
+
+# The port of database :
+Port: 5432
 
 # The name of database user :
-Login: value
+Login: pts4
 
 # The password of database user :
-Password: value
+Password: 13377997
+
+# The database name :
+Database name: pts4_db
