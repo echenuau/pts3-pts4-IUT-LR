@@ -12,10 +12,9 @@ class Database:
     user = ""
     password = ""
     port = ""
-    # Is Modified when insertClient() is call
-    clientID = 0
-    # Is odifeid when insertSession() is call
+    robotSerialNumber = ""
     sessionID = 0
+
     
     def __init__(self,host, dbname, user, password, port):
         self.host = host
@@ -24,58 +23,60 @@ class Database:
         self.password = password
         self.port = port
 
-    def insertClient(self,surname, name):
-        global clientID
-        sql = """INSERT INTO "client"(surname,name)
-                VALUES(%s,%s) RETURNING id"""
-        conn = None
-        try:
-            # read database configuration
-            # params = config()
-            # connect to the PostgreSQL database
-            conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
-            # create a new cursor
-            cur = conn.cursor()
-            # execute the INSERT statement
-            cur.execute(sql, (surname, name))
-            # get the generated id back
-            client_id = cur.fetchone()[0]
-            clientID = client_id
-            # commit the changes to the database
-            conn.commit()
-            # close communication with the database
-            cur.close()
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-        finally:
-            if conn is not None:
-                conn.close()
+    def insertRobot(self,serialNumber,name,surname):
+    	global robotSerialNumber
+    	robotSerialNumber = None
+    	robotSerialNumber = serialNumber
+    	sql = """INSERT INTO "robot"(serial_number,userName,userSurname)
+    	VALUES(%s,%s,%s)"""
+    	conn = None
+    	try:
+    	    # connect to the PostgreSQL database
+    	    conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
+    	    # create a new cursor
+    	    cur = conn.cursor()
+    	    # execute the INSERT statement
+    	    cur.execute(sql,(robotSerialNumber,name,surname))
+    	    # commit the changes to the database
+    	    conn.commit()
+    	    # close communication with the database
+    	    cur.close()
+    	except(Exception,psycopg2.DatabaseError) as error:
+    		print(error)
+    	finally:
+    		if conn is not None:
+    			conn.close()
 
     def startSession(self):
         global sessionID
+        global robotSerialNumber
+        sessionID=None
+
         '''
         coordinateLong = rtk.getLongitude()
         coordinateLat = rtk.getLatitude()
         '''
-        DateSession = str(date.today())
-        Begin_Hour = str(date.today())
+
+        now = datetime.now().time()
+        DateSession = str(datetime.now())
+        Begin_Hour = str(now.hour) + "h" + str(now.minute) + "min" + str(now.second) + "s"
 
         '''a supprimer quand RTK fait'''
         coordinateLong = -1.1520434
         coordinateLat = 46.1591126
         Start_Position = AsIs("'(%s,%s)'" % (adapt(coordinateLat), adapt(coordinateLong)))
 
-        sql = """INSERT INTO session(date,Start_Position,Begin_Hour,client)
+        sql = """INSERT INTO "session"(date,Start_Position,Begin_Hour,robot)
                 VALUES(%s,%s,%s,%s) RETURNING id"""
+
+        conn = None
         try:
-            # read database configuration
-            # params = config()
             # connect to the PostgreSQL database
             conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
             # create a new cursor
             cur = conn.cursor()
             # execute the INSERT statement
-            cur.execute(sql, (DateSession, Start_Position, Begin_Hour, clientID))
+            cur.execute(sql, (DateSession, Start_Position, Begin_Hour, robotSerialNumber))
             # get the generated id back
             sessionID = cur.fetchone()[0]
             # commit the changes to the database
@@ -91,14 +92,13 @@ class Database:
     def endSession(self):
         global sessionID
         now = datetime.now().time()
-        End_Hour = str(now.hour) + str(now.minute) + str(now.second)
+        End_Hour = str(now.hour) + "h" + str(now.minute) + "min" + str(now.second) + "s"
 
         sql = """UPDATE session
                 SET End_Hour = %s
                 WHERE id = %s"""
+        conn = None
         try:
-            # read database configuration
-            # params = config()
             # connect to the PostgreSQL database
             conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
             # create a new cursor
@@ -137,8 +137,6 @@ class Database:
         sql = """INSERT INTO resultat(angle,coordinates,timer_hour,weather,humidity,temperature,session)
                 VALUES(%s,%s,%s,%s,%s,%s,%s);"""
         try:
-            # read database configuration
-            # params = config()
             # connect to the PostgreSQL database
             conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
             # create a new cursor
@@ -154,3 +152,8 @@ class Database:
         finally:
             if conn is not None:
                 conn.close()
+
+db = Database("postgresql-pts4.alwaysdata.net","pts4_db","pts4","13377997","5432")
+var = "N1234567"
+db.insertRobot(var,"Jean","Michel")
+db.startSession()
