@@ -27,8 +27,8 @@ class Database:
     	global robotSerialNumber
     	robotSerialNumber = None
     	robotSerialNumber = serialNumber
-    	sql = """INSERT INTO "robot"(serial_number)
-    	VALUES(%s)"""
+    	sql = 'INSERT INTO robot(serial_number) VALUES(\'{}\');'.format(robotSerialNumber)
+    	print(sql)
     	conn = None
     	try:
     	    # connect to the PostgreSQL database
@@ -36,7 +36,7 @@ class Database:
     	    # create a new cursor
     	    cur = conn.cursor()
     	    # execute the INSERT statement
-    	    cur.execute(sql,(% robotSerialNumber))
+    	    cur.execute(sql)
     	    # commit the changes to the database
     	    conn.commit()
     	    # close communication with the database
