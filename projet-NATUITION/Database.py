@@ -23,12 +23,12 @@ class Database:
         self.password = password
         self.port = port
 
-    def insertRobot(self,serialNumber,name,surname):
+    def insertRobot(self,serialNumber):
     	global robotSerialNumber
     	robotSerialNumber = None
     	robotSerialNumber = serialNumber
-    	sql = """INSERT INTO "robot"(serial_number,userName,userSurname)
-    	VALUES(%s,%s,%s)"""
+    	sql = """INSERT INTO "robot"(serial_number)
+    	VALUES(%s)"""
     	conn = None
     	try:
     	    # connect to the PostgreSQL database
@@ -36,7 +36,7 @@ class Database:
     	    # create a new cursor
     	    cur = conn.cursor()
     	    # execute the INSERT statement
-    	    cur.execute(sql,(robotSerialNumber,name,surname))
+    	    cur.execute(sql,(% robotSerialNumber))
     	    # commit the changes to the database
     	    conn.commit()
     	    # close communication with the database
@@ -154,6 +154,7 @@ class Database:
                 conn.close()
 
 db = Database("postgresql-pts4.alwaysdata.net","pts4_db","pts4","13377997","5432")
-var = "N1234567"
-db.insertRobot(var,"Jean","Michel")
+var="N24632"
+db.insertRobot(var)
 db.startSession()
+db.endSession()
