@@ -28,7 +28,6 @@ class Database:
     	robotSerialNumber = None
     	robotSerialNumber = serialNumber
     	sql = 'INSERT INTO robot(serial_number) VALUES(\'{}\');'.format(robotSerialNumber)
-    	print(sql)
     	conn = None
     	try:
     	    # connect to the PostgreSQL database
@@ -59,7 +58,7 @@ class Database:
 
         now = datetime.now().time()
         DateSession = str(datetime.now())
-        Begin_Hour = str(now.hour) + "h" + str(now.minute) + "min" + str(now.second) + "s"
+        Begin_Hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
         '''a supprimer quand RTK fait'''
         coordinateLong = -1.1520434
@@ -92,7 +91,7 @@ class Database:
     def endSession(self):
         global sessionID
         now = datetime.now().time()
-        End_Hour = str(now.hour) + "h" + str(now.minute) + "min" + str(now.second) + "s"
+        End_Hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
         sql = """UPDATE session
                 SET End_Hour = %s
@@ -130,9 +129,9 @@ class Database:
         humidity = 1.1
         coordinateLong = -1.1520434
         coordinateLat = 46.1591126
-
+        now = datetime.now().time()
         coordinate = AsIs("'(%s,%s)'" % (adapt(coordinateLat), adapt(coordinateLong)))
-        time_hour = datetime.now().time()
+        time_hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
         sql = """INSERT INTO resultat(angle,coordinates,timer_hour,weather,humidity,temperature,session)
                 VALUES(%s,%s,%s,%s,%s,%s,%s);"""
