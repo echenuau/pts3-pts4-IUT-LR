@@ -16,17 +16,14 @@ Turns: 1
 # Multiplication ratio between the motor and the potentiometer :
 Ratio M&P: 3
 # Multiplication ratio between the motor and wheels :
-Ratio M&W: 3.6
+Ratio M&W: 2.6
 
 # ------------------------
-# | Customer information |
+# | Robot information |
 # ------------------------
 
-# The customer's name :
-Name: ROUDOT
-
-# The customer's surname :
-Surname: Cyril
+# The robot's serial number :
+Serial number: N189563
 
 # ------------------------
 # | Database information |
