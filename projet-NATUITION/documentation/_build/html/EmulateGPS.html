@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>EmulateGPS module &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SensorProcessing module" href="SensorProcessing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-EmulateGPS">
+<span id="emulategps-module"></span><h1>EmulateGPS module<a class="headerlink" href="#module-EmulateGPS" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="EmulateGPS.EmulateGPS">
+<em class="property">class </em><code class="sig-prename descclassname">EmulateGPS.</code><code class="sig-name descname">EmulateGPS</code><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class emulate a route between UIT of La Rochelle and Natuition’s office.</p>
+<p>This route is composed by one thousand point. One point is defiend by a latitude and a longitude.</p>
+<p>This class has to be used to test inserting potentiometer results in database whitout use the robot.</p>
+<dl class="simple">
+<dt>This method initialize the route parameters :</dt><dd><ul class="simple">
+<li><p>start point of route,</p></li>
+<li><p>end point of route.</p></li>
+</ul>
+</dd>
+</dl>
+<p>These values can be modified to create other routes (it’s useless).</p>
+<p><strong>Authors of this class :</strong> CHENUAUD Emmanuel.</p>
+<dl class="method">
+<dt id="EmulateGPS.EmulateGPS.calculateCoeff">
+<code class="sig-name descname">calculateCoeff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS.calculateCoeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS.calculateCoeff" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This method calculates spacing between two route points for routes composed by one thousand points :</dt><dd><ul class="simple">
+<li><p>latitude coefficient,</p></li>
+<li><p>longitude coefficient.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmulateGPS.EmulateGPS.countIncrement">
+<code class="sig-name descname">countIncrement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS.countIncrement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS.countIncrement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method increments the position on the route by one.</p>
+<p>Don’t use it method. It’s already used in getLongitude().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmulateGPS.EmulateGPS.getLatitude">
+<code class="sig-name descname">getLatitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS.getLatitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS.getLatitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the latitude of current point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>float: The latitude of current point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmulateGPS.EmulateGPS.getLatitude_N">
+<code class="sig-name descname">getLatitude_N</code><span class="sig-paren">(</span><em class="sig-param">N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS.getLatitude_N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS.getLatitude_N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the latitude of the N-th point in the route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>N</strong> – The latitude of targeted point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmulateGPS.EmulateGPS.getLongitude">
+<code class="sig-name descname">getLongitude</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS.getLongitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS.getLongitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the longitude of current point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>float: The longitude of current point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="EmulateGPS.EmulateGPS.getLongitude_N">
+<code class="sig-name descname">getLongitude_N</code><span class="sig-paren">(</span><em class="sig-param">N</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/EmulateGPS.html#EmulateGPS.getLongitude_N"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#EmulateGPS.EmulateGPS.getLongitude_N" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the longitude of the N-th point in the route.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>N</strong> – The longitude of targeted point.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">projet-NATUITION</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalogDigitalConverter.html">AnalogDigitalConverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Database.html">Database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SensorProcessing.html">SensorProcessing module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">EmulateGPS module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">projet-NATUITION</a><ul>
+      <li>Previous: <a href="SensorProcessing.html" title="previous chapter">SensorProcessing module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENUAUD Emmanuel, ELOY Tyfenn, LAMBERT Vincent, TOURNEUR Hugo, SOULLARD Thomas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/EmulateGPS.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

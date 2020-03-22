@@ -1,0 +1,48 @@
+# --------------------------------------------------------------------------------------------------------------
+# | Configuration file for the purple robot retrieving the steering angle project and saving it to a database. |
+# | To comment in this file use '#'.                                                                           |
+# --------------------------------------------------------------------------------------------------------------
+
+# ------------------------------------------
+# | Analog digital converter configuration |
+# ------------------------------------------
+
+# The voltage in volt of the zero angle :
+0°: 2.047
+# Potentiometer reference voltage :
+Reference: 4.094
+# Maximum number of turns that the potentiometer can make :
+Turns: 1
+# Multiplication ratio between the motor and the potentiometer :
+Ratio M&P: 3
+# Multiplication ratio between the motor and wheels :
+Ratio M&W: 3.6
+
+# ------------------------
+# | Customer information |
+# ------------------------
+
+# The customer's name :
+Name: value
+
+# The customer's surname :
+Surname: value
+
+# ------------------------
+# | Database information |
+# ------------------------
+
+# The host of database :
+Host: value
+
+# The port of database :
+Port: value
+
+# The name of database user :
+Login: value
+
+# The password of database user :
+Password: value
+
+# The database name :
+Database name: value
