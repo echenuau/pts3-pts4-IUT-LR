@@ -8,3 +8,5 @@ projet-NATUITION
    Database
    SensorProcessing
    EmulateGPS
+   Client
+   Server

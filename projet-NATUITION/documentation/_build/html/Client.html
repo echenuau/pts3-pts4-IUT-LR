@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>AnalogDigitalConverter module &#8212; Natuition  documentation</title>
+    <title>Client module &#8212; Natuition  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
@@ -15,8 +15,8 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Database module" href="Database.html" />
-    <link rel="prev" title="projet-NATUITION" href="modules.html" />
+    <link rel="next" title="Server module" href="Server.html" />
+    <link rel="prev" title="EmulateGPS module" href="EmulateGPS.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -33,38 +33,45 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-AnalogDigitalConverter">
-<span id="analogdigitalconverter-module"></span><h1>AnalogDigitalConverter module<a class="headerlink" href="#module-AnalogDigitalConverter" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-Client">
+<span id="client-module"></span><h1>Client module<a class="headerlink" href="#module-Client" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="AnalogDigitalConverter.AnalogDigitalConverter">
-<em class="property">class </em><code class="sig-prename descclassname">AnalogDigitalConverter.</code><code class="sig-name descname">AnalogDigitalConverter</code><span class="sig-paren">(</span><em class="sig-param">channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalogDigitalConverter.html#AnalogDigitalConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalogDigitalConverter.AnalogDigitalConverter" title="Permalink to this definition">¶</a></dt>
+<dt id="Client.Client">
+<em class="property">class </em><code class="sig-prename descclassname">Client.</code><code class="sig-name descname">Client</code><span class="sig-paren">(</span><em class="sig-param">port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Client.html#Client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Client.Client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class managing the analog digital converter.</p>
-<p>Configure the I2C bus.</p>
+<p>Class manage the client which sends location data.</p>
+<p>Inits the client structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>channel</strong> – Channel number where the potentiometer is connected [0|1|2].</p>
+<dd class="field-odd"><p><strong>port</strong> – The server port.</p>
 </dd>
 </dl>
 <p><strong>Authors of this class :</strong> CHENUAUD Emmanuel and LAMBERT Vincent.</p>
 <dl class="method">
-<dt id="AnalogDigitalConverter.AnalogDigitalConverter.getFormattedVoltage">
-<code class="sig-name descname">getFormattedVoltage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalogDigitalConverter.html#AnalogDigitalConverter.getFormattedVoltage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalogDigitalConverter.AnalogDigitalConverter.getFormattedVoltage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the formatted ADC voltage (x.xxx).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>float: Formatted ADC voltage (in volt).</p>
-</dd>
-</dl>
+<dt id="Client.Client.closeConnection">
+<code class="sig-name descname">closeConnection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Client.html#Client.closeConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Client.Client.closeConnection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method allows to close the connection with server.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AnalogDigitalConverter.AnalogDigitalConverter.getVoltageOfChannel">
-<code class="sig-name descname">getVoltageOfChannel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalogDigitalConverter.html#AnalogDigitalConverter.getVoltageOfChannel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalogDigitalConverter.AnalogDigitalConverter.getVoltageOfChannel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the ADC voltage.</p>
+<dt id="Client.Client.connectionToServer">
+<code class="sig-name descname">connectionToServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Client.html#Client.connectionToServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Client.Client.connectionToServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method allows client to establish connection with server.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>float: ADC voltage (in volt).</p>
+<dd class="field-odd"><p>True or False</p>
+</dd>
+</dl>
+<p>True = client connected, False = connection refused.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Client.Client.sendData">
+<code class="sig-name descname">sendData</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Client.html#Client.sendData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Client.Client.sendData" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method allows client to send data at server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – The data you want send at server.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -93,11 +100,11 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">projet-NATUITION</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">AnalogDigitalConverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalogDigitalConverter.html">AnalogDigitalConverter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Database.html">Database module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SensorProcessing.html">SensorProcessing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="EmulateGPS.html">EmulateGPS module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Client.html">Client module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Client module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Server.html">Server module</a></li>
 </ul>
 </li>
@@ -108,8 +115,8 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="modules.html">projet-NATUITION</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">projet-NATUITION</a></li>
-      <li>Next: <a href="Database.html" title="next chapter">Database module</a></li>
+      <li>Previous: <a href="EmulateGPS.html" title="previous chapter">EmulateGPS module</a></li>
+      <li>Next: <a href="Server.html" title="next chapter">Server module</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -144,7 +151,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/AnalogDigitalConverter.rst.txt"
+      <a href="_sources/Client.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
