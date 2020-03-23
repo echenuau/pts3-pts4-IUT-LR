@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>AnalogDigitalConverter module &#8212; Natuition  documentation</title>
+    <title>Server module &#8212; Natuition  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
@@ -15,8 +15,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Database module" href="Database.html" />
-    <link rel="prev" title="projet-NATUITION" href="modules.html" />
+    <link rel="prev" title="Client module" href="Client.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -33,38 +32,46 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-AnalogDigitalConverter">
-<span id="analogdigitalconverter-module"></span><h1>AnalogDigitalConverter module<a class="headerlink" href="#module-AnalogDigitalConverter" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-Server">
+<span id="server-module"></span><h1>Server module<a class="headerlink" href="#module-Server" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="AnalogDigitalConverter.AnalogDigitalConverter">
-<em class="property">class </em><code class="sig-prename descclassname">AnalogDigitalConverter.</code><code class="sig-name descname">AnalogDigitalConverter</code><span class="sig-paren">(</span><em class="sig-param">channel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalogDigitalConverter.html#AnalogDigitalConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalogDigitalConverter.AnalogDigitalConverter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class managing the analog digital converter.</p>
-<p>Configure the I2C bus.</p>
+<dt id="Server.Server">
+<em class="property">class </em><code class="sig-prename descclassname">Server.</code><code class="sig-name descname">Server</code><span class="sig-paren">(</span><em class="sig-param">port</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Server.html#Server"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Server.Server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Thread</span></code></p>
+<p>Class manage the server which recives location data.</p>
+<p>Inits the server structure in a new thread.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>channel</strong> – Channel number where the potentiometer is connected [0|1|2].</p>
+<dd class="field-odd"><p><strong>port</strong> – The server port.</p>
 </dd>
 </dl>
 <p><strong>Authors of this class :</strong> CHENUAUD Emmanuel and LAMBERT Vincent.</p>
 <dl class="method">
-<dt id="AnalogDigitalConverter.AnalogDigitalConverter.getFormattedVoltage">
-<code class="sig-name descname">getFormattedVoltage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalogDigitalConverter.html#AnalogDigitalConverter.getFormattedVoltage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalogDigitalConverter.AnalogDigitalConverter.getFormattedVoltage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the formatted ADC voltage (x.xxx).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>float: Formatted ADC voltage (in volt).</p>
-</dd>
-</dl>
+<dt id="Server.Server.exit">
+<code class="sig-name descname">exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Server.html#Server.exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Server.Server.exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method allows to stop server and cut existing connection with any client.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AnalogDigitalConverter.AnalogDigitalConverter.getVoltageOfChannel">
-<code class="sig-name descname">getVoltageOfChannel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/AnalogDigitalConverter.html#AnalogDigitalConverter.getVoltageOfChannel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalogDigitalConverter.AnalogDigitalConverter.getVoltageOfChannel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the ADC voltage.</p>
+<dt id="Server.Server.getLocation">
+<code class="sig-name descname">getLocation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Server.html#Server.getLocation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Server.Server.getLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method allows to recover actual location given by client.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>float: ADC voltage (in volt).</p>
+<dd class="field-odd"><p>dict(lat,long)</p>
+</dd>
+</dl>
+<p>lat = latitude of location, long = longitude of location</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Server.Server.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Server.html#Server.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Server.Server.run" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This method :</dt><dd><ul class="simple">
+<li><p>create a listener in the server thread to wait client connection,</p></li>
+<li><p>recovery and processing of data received in socket.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -93,12 +100,12 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">projet-NATUITION</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">AnalogDigitalConverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalogDigitalConverter.html">AnalogDigitalConverter module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Database.html">Database module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SensorProcessing.html">SensorProcessing module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="EmulateGPS.html">EmulateGPS module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Client.html">Client module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Server.html">Server module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Server module</a></li>
 </ul>
 </li>
 </ul>
@@ -108,8 +115,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="modules.html">projet-NATUITION</a><ul>
-      <li>Previous: <a href="modules.html" title="previous chapter">projet-NATUITION</a></li>
-      <li>Next: <a href="Database.html" title="next chapter">Database module</a></li>
+      <li>Previous: <a href="Client.html" title="previous chapter">Client module</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -144,7 +150,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/AnalogDigitalConverter.rst.txt"
+      <a href="_sources/Server.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
