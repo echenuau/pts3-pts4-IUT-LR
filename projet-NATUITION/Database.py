@@ -1,8 +1,15 @@
 import psycopg2
 import datetime
+import time
+from APIWeather import APIWeather
 from datetime import date
 from datetime import datetime
+import threading
+import sys 
 from psycopg2.extensions import adapt, register_adapter, AsIs
+sys.path.append("./socket/") 
+from Server import Server
+
 
 
 class Database:
@@ -15,6 +22,13 @@ class Database:
         self.port = port
         self.robotSerialNumber = robotSerialNumber
         self.sessionID = sessionID
+        self.server = Server(4010)
+        self.server.start()
+        time.sleep(15)
+        coordinate = self.server.getLocation()
+        coordinateLong = coordinate[0]
+        coordinateLat = coordinate[1]
+        self.APIWeather = APIWeather(coordinateLong,coordinateLat)
 
 
     def insertRobot(self,serialNumber):
@@ -22,28 +36,27 @@ class Database:
         """
         This method obtain the serial number of the robot and send them in the Database by a POSTGRESQL Request
         """
-
-    	global robotSerialNumber
-    	robotSerialNumber = None
-    	robotSerialNumber = serialNumber
-    	sql = 'INSERT INTO robot(serial_number) VALUES(\'{}\');'.format(robotSerialNumber)
-    	conn = None
-    	try:
+        global robotSerialNumber
+        robotSerialNumber = None
+        robotSerialNumber = serialNumber
+        sql = 'INSERT INTO robot(serial_number) VALUES(\'{}\');'.format(robotSerialNumber)
+        conn = None
+        try:
     	    # connect to the PostgreSQL database
-    	    conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
+            conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
     	    # create a new cursor
-    	    cur = conn.cursor()
+            cur = conn.cursor()
     	    # execute the INSERT statement
-    	    cur.execute(sql)
+            cur.execute(sql)
     	    # commit the changes to the database
-    	    conn.commit()
+            conn.commit()
     	    # close communication with the database
-    	    cur.close()
-    	except(Exception,psycopg2.DatabaseError) as error:
-    		print(error)
-    	finally:
-    		if conn is not None:
-    			conn.close()
+            cur.close()
+        except(Exception,psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
 
     def startSession(self):
 
@@ -52,15 +65,17 @@ class Database:
         """
         global sessionID
         global robotSerialNumber
+        global server
+
         sessionID=None
         now = datetime.now().time()
         DateSession = str(datetime.now())
         Begin_Hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
-
-        coordinateLong = -1.1520434
-        coordinateLat = 46.1591126
-        Start_Position = AsIs("'(%s,%s)'" % (adapt(coordinateLat), adapt(coordinateLong)))
-
+        coordinate = self.server.getLocation()
+        print(coordinate)
+        coordinateLong = coordinate[0]
+        coordinateLat = coordinate[1]
+        Start_Position = AsIs("'(%s,%s)'" % (coordinateLat,coordinateLong))
         sql = """INSERT INTO "session"(date,Start_Position,Begin_Hour,robot)
                 VALUES(%s,%s,%s,%s) RETURNING id"""
 
@@ -90,6 +105,8 @@ class Database:
         """
 
         global sessionID
+
+
         now = datetime.now().time()
         End_Hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
@@ -121,21 +138,18 @@ class Database:
         We have to call the class weather to obtain the different data and we return all of this data as results in the DataBase table of the same name.
         """
 
-        #weather = weatherApi.getWeather()
-        #temperature = weatherApi.getTemperature()
-        #humidity = weatherApi.getHumidity()
-        #coordinateLong = rtk.getLongitude()
-        #coordinateLat = rtk.getLatitude()
-        
+        global APIWeather
+
+        weather = APIWeather.getWeather()
+        temperature = APIWeather.getTemperature()
+        humidity = APIWeather.getHumidity()
+        coordinate = self.server.getLocation()
+        coordinateLong = coordinate[0]
+        coordinateLat = coordinate[1]
 
         # A supprimer quand il y aura rtk et weather
-        weather = "Wow il fait beau"
-        temperature = 15
-        humidity = 1.1
-        coordinateLong = -1.1520434
-        coordinateLat = 46.1591126
         now = datetime.now().time()
-        coordinate = AsIs("'(%s,%s)'" % (adapt(coordinateLat), adapt(coordinateLong)))
+        coordinate = AsIs("'(%s,%s)'" % (coordinateLat, coordinateLong))
         time_hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
         sql = """INSERT INTO resultat(angle,coordinates,timer_hour,weather,humidity,temperature,session)
@@ -157,7 +171,8 @@ class Database:
             if conn is not None:
                 conn.close()
 
-db = Database("postgresql-pts4.alwaysdata.net","pts4_db","pts4","13377997","5432")
+print("u")
+db = Database("postgresql-pts4.alwaysdata.net","pts4_db","pts4","13377997","5432","",0)
 var="N24632"
 db.insertRobot(var)
 db.startSession()
