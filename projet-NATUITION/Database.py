@@ -6,24 +6,23 @@ from psycopg2.extensions import adapt, register_adapter, AsIs
 
 
 class Database:
-    
-    host = ""
-    db = ""
-    user = ""
-    password = ""
-    port = ""
-    robotSerialNumber = ""
-    sessionID = 0
-
-    
-    def __init__(self,host, dbname, user, password, port):
+       
+    def __init__(self,host, dbname, user, password, port,robotSerialNumber,sessionID):
         self.host = host
         self.dbName = dbname
         self.user = user
         self.password = password
         self.port = port
+        self.robotSerialNumber = robotSerialNumber
+        self.sessionID = sessionID
+
 
     def insertRobot(self,serialNumber):
+
+        """
+        This method obtain the serial number of the robot and send them in the Database by a POSTGRESQL Request
+        """
+
     	global robotSerialNumber
     	robotSerialNumber = None
     	robotSerialNumber = serialNumber
@@ -47,20 +46,17 @@ class Database:
     			conn.close()
 
     def startSession(self):
+
+        """
+        This method format the start date, hour and coordinates and the put them in a POSTGRESQL request that is applicate to the alwaysData Database.
+        """
         global sessionID
         global robotSerialNumber
         sessionID=None
-
-        '''
-        coordinateLong = rtk.getLongitude()
-        coordinateLat = rtk.getLatitude()
-        '''
-
         now = datetime.now().time()
         DateSession = str(datetime.now())
         Begin_Hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
-        '''a supprimer quand RTK fait'''
         coordinateLong = -1.1520434
         coordinateLat = 46.1591126
         Start_Position = AsIs("'(%s,%s)'" % (adapt(coordinateLat), adapt(coordinateLong)))
@@ -89,6 +85,10 @@ class Database:
                 conn.close()
 
     def endSession(self):
+        """
+        This method is useful to complete the Database after the end of a session. It recover the end hour of the session and then use a SQL request to send it in the Database
+        """
+
         global sessionID
         now = datetime.now().time()
         End_Hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
@@ -115,13 +115,18 @@ class Database:
                 conn.close()
 
     def insertResults(self,angle):
-        '''
-        weather = weatherApi.getWeather()
-        temperature = weatherApi.getTemperature()
-        humidity = weatherApi.getHumidity()
-        coordinateLong = rtk.getLongitude()
-        coordinateLat = rtk.getLatitude()
-        '''
+        
+        """
+        This method is the method call for inserting the angle and the weather in the Database table results.  
+        We have to call the class weather to obtain the different data and we return all of this data as results in the DataBase table of the same name.
+        """
+
+        #weather = weatherApi.getWeather()
+        #temperature = weatherApi.getTemperature()
+        #humidity = weatherApi.getHumidity()
+        #coordinateLong = rtk.getLongitude()
+        #coordinateLat = rtk.getLatitude()
+        
 
         # A supprimer quand il y aura rtk et weather
         weather = "Wow il fait beau"
