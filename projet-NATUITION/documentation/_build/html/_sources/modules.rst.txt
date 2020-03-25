@@ -10,3 +10,5 @@ projet-NATUITION
    EmulateGPS
    Client
    Server
+   APIWeather
+   cacheXML
