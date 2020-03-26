@@ -33,8 +33,39 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="database-module">
-<h1>Database module<a class="headerlink" href="#database-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-Database">
+<span id="database-module"></span><h1>Database module<a class="headerlink" href="#module-Database" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Database.Database">
+<em class="property">class </em><code class="sig-prename descclassname">Database.</code><code class="sig-name descname">Database</code><span class="sig-paren">(</span><em class="sig-param">host</em>, <em class="sig-param">dbname</em>, <em class="sig-param">user</em>, <em class="sig-param">password</em>, <em class="sig-param">port</em>, <em class="sig-param">robotSerialNumber</em>, <em class="sig-param">sessionID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="Database.Database.endSession">
+<code class="sig-name descname">endSession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.endSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.endSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is useful to complete the Database after the end of a session. It recover the end hour of the session and then use a SQL request to send it in the Database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.insertResults">
+<code class="sig-name descname">insertResults</code><span class="sig-paren">(</span><em class="sig-param">angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.insertResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.insertResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is the method call for inserting the angle and the weather in the Database table results.
+We have to call the class weather to obtain the different data and we return all of this data as results in the DataBase table of the same name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.insertRobot">
+<code class="sig-name descname">insertRobot</code><span class="sig-paren">(</span><em class="sig-param">serialNumber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.insertRobot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.insertRobot" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method obtain the serial number of the robot and send them in the Database by a POSTGRESQL Request</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.startSession">
+<code class="sig-name descname">startSession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.startSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.startSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method format the start date, hour and coordinates and the put them in a POSTGRESQL request that is applicate to the alwaysData Database.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

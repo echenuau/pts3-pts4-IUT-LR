@@ -20,6 +20,8 @@ class Server(threading.Thread):
 		self.socket.bind(('', self.port))
 		self.connection = None
 		self.location = dict()
+		self.location[0] = 0.
+		self.location[1] = 0.
 
 	def run(self):
 		"""

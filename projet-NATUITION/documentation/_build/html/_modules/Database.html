@@ -34,71 +34,82 @@
   <h1>Source code for Database</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">psycopg2</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">APIWeather</span> <span class="k">import</span> <span class="n">APIWeather</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">date</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">sys</span> 
 <span class="kn">from</span> <span class="nn">psycopg2.extensions</span> <span class="k">import</span> <span class="n">adapt</span><span class="p">,</span> <span class="n">register_adapter</span><span class="p">,</span> <span class="n">AsIs</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;./socket/&quot;</span><span class="p">)</span> 
+<span class="kn">from</span> <span class="nn">Server</span> <span class="k">import</span> <span class="n">Server</span>
+
 
 
 <div class="viewcode-block" id="Database"><a class="viewcode-back" href="../Database.html#Database.Database">[docs]</a><span class="k">class</span> <span class="nc">Database</span><span class="p">:</span>
-    
-    <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">db</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">port</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">sessionID</span> <span class="o">=</span> <span class="mi">0</span>
-
-    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">host</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+       
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">host</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span><span class="n">robotSerialNumber</span><span class="p">,</span><span class="n">sessionID</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dbName</span> <span class="o">=</span> <span class="n">dbname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="n">robotSerialNumber</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span> <span class="o">=</span> <span class="n">sessionID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="mi">4010</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">coordinate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">getLocation</span><span class="p">()</span>
+        <span class="n">coordinateLong</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">coordinateLat</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">APIWeather</span> <span class="o">=</span> <span class="n">APIWeather</span><span class="p">(</span><span class="n">coordinateLong</span><span class="p">,</span><span class="n">coordinateLat</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="Database.insertRobot"><a class="viewcode-back" href="../Database.html#Database.Database.insertRobot">[docs]</a>    <span class="k">def</span> <span class="nf">insertRobot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">serialNumber</span><span class="p">):</span>
-    	<span class="k">global</span> <span class="n">robotSerialNumber</span>
-    	<span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="kc">None</span>
-    	<span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="n">serialNumber</span>
-    	<span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;INSERT INTO robot(serial_number) VALUES(</span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1">);&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">robotSerialNumber</span><span class="p">)</span>
-    	<span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
-    	<span class="k">try</span><span class="p">:</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method obtain the serial number of the robot and send them in the Database by a POSTGRESQL Request</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">global</span> <span class="n">robotSerialNumber</span>
+        <span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="n">serialNumber</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;INSERT INTO robot(serial_number) VALUES(</span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1">);&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">robotSerialNumber</span><span class="p">)</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
     	    <span class="c1"># connect to the PostgreSQL database</span>
-    	    <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbName</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbName</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
     	    <span class="c1"># create a new cursor</span>
-    	    <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     	    <span class="c1"># execute the INSERT statement</span>
-    	    <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
     	    <span class="c1"># commit the changes to the database</span>
-    	    <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     	    <span class="c1"># close communication with the database</span>
-    	    <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    	<span class="k">except</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span><span class="n">psycopg2</span><span class="o">.</span><span class="n">DatabaseError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-    		<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-    	<span class="k">finally</span><span class="p">:</span>
-    		<span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    			<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+            <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span><span class="n">psycopg2</span><span class="o">.</span><span class="n">DatabaseError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Database.startSession"><a class="viewcode-back" href="../Database.html#Database.Database.startSession">[docs]</a>    <span class="k">def</span> <span class="nf">startSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method format the start date, hour and coordinates and the put them in a POSTGRESQL request that is applicate to the alwaysData Database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">global</span> <span class="n">sessionID</span>
         <span class="k">global</span> <span class="n">robotSerialNumber</span>
+        <span class="k">global</span> <span class="n">server</span>
+
         <span class="n">sessionID</span><span class="o">=</span><span class="kc">None</span>
-
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        coordinateLong = rtk.getLongitude()</span>
-<span class="sd">        coordinateLat = rtk.getLatitude()</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">DateSession</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
         <span class="n">Begin_Hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
-
-        <span class="sd">&#39;&#39;&#39;a supprimer quand RTK fait&#39;&#39;&#39;</span>
-        <span class="n">coordinateLong</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.1520434</span>
-        <span class="n">coordinateLat</span> <span class="o">=</span> <span class="mf">46.1591126</span>
-        <span class="n">Start_Position</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">adapt</span><span class="p">(</span><span class="n">coordinateLat</span><span class="p">),</span> <span class="n">adapt</span><span class="p">(</span><span class="n">coordinateLong</span><span class="p">)))</span>
-
+        <span class="n">coordinate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">getLocation</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span>
+        <span class="n">coordinateLong</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">coordinateLat</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">Start_Position</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coordinateLat</span><span class="p">,</span><span class="n">coordinateLong</span><span class="p">))</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;INSERT INTO &quot;session&quot;(date,Start_Position,Begin_Hour,robot)</span>
 <span class="s2">                VALUES(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">) RETURNING id&quot;&quot;&quot;</span>
 
@@ -123,7 +134,13 @@
                 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Database.endSession"><a class="viewcode-back" href="../Database.html#Database.Database.endSession">[docs]</a>    <span class="k">def</span> <span class="nf">endSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is useful to complete the Database after the end of a session. It recover the end hour of the session and then use a SQL request to send it in the Database</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">global</span> <span class="n">sessionID</span>
+
+
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="n">End_Hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
 
@@ -149,22 +166,24 @@
                 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Database.insertResults"><a class="viewcode-back" href="../Database.html#Database.Database.insertResults">[docs]</a>    <span class="k">def</span> <span class="nf">insertResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">angle</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        weather = weatherApi.getWeather()</span>
-<span class="sd">        temperature = weatherApi.getTemperature()</span>
-<span class="sd">        humidity = weatherApi.getHumidity()</span>
-<span class="sd">        coordinateLong = rtk.getLongitude()</span>
-<span class="sd">        coordinateLat = rtk.getLatitude()</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is the method call for inserting the angle and the weather in the Database table results.  </span>
+<span class="sd">        We have to call the class weather to obtain the different data and we return all of this data as results in the DataBase table of the same name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">global</span> <span class="n">APIWeather</span>
+
+        <span class="n">weather</span> <span class="o">=</span> <span class="n">APIWeather</span><span class="o">.</span><span class="n">getWeather</span><span class="p">()</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">APIWeather</span><span class="o">.</span><span class="n">getTemperature</span><span class="p">()</span>
+        <span class="n">humidity</span> <span class="o">=</span> <span class="n">APIWeather</span><span class="o">.</span><span class="n">getHumidity</span><span class="p">()</span>
+        <span class="n">coordinate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">getLocation</span><span class="p">()</span>
+        <span class="n">coordinateLong</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">coordinateLat</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># A supprimer quand il y aura rtk et weather</span>
-        <span class="n">weather</span> <span class="o">=</span> <span class="s2">&quot;Wow il fait beau&quot;</span>
-        <span class="n">temperature</span> <span class="o">=</span> <span class="mi">15</span>
-        <span class="n">humidity</span> <span class="o">=</span> <span class="mf">1.1</span>
-        <span class="n">coordinateLong</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.1520434</span>
-        <span class="n">coordinateLat</span> <span class="o">=</span> <span class="mf">46.1591126</span>
         <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">coordinate</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">adapt</span><span class="p">(</span><span class="n">coordinateLat</span><span class="p">),</span> <span class="n">adapt</span><span class="p">(</span><span class="n">coordinateLong</span><span class="p">)))</span>
+        <span class="n">coordinate</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coordinateLat</span><span class="p">,</span> <span class="n">coordinateLong</span><span class="p">))</span>
         <span class="n">time_hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
 
         <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;INSERT INTO resultat(angle,coordinates,timer_hour,weather,humidity,temperature,session)</span>
@@ -186,7 +205,8 @@
             <span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
-<span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="s2">&quot;postgresql-pts4.alwaysdata.net&quot;</span><span class="p">,</span><span class="s2">&quot;pts4_db&quot;</span><span class="p">,</span><span class="s2">&quot;pts4&quot;</span><span class="p">,</span><span class="s2">&quot;13377997&quot;</span><span class="p">,</span><span class="s2">&quot;5432&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;u&quot;</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="s2">&quot;postgresql-pts4.alwaysdata.net&quot;</span><span class="p">,</span><span class="s2">&quot;pts4_db&quot;</span><span class="p">,</span><span class="s2">&quot;pts4&quot;</span><span class="p">,</span><span class="s2">&quot;13377997&quot;</span><span class="p">,</span><span class="s2">&quot;5432&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">var</span><span class="o">=</span><span class="s2">&quot;N24632&quot;</span>
 <span class="n">db</span><span class="o">.</span><span class="n">insertRobot</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
 <span class="n">db</span><span class="o">.</span><span class="n">startSession</span><span class="p">()</span>
