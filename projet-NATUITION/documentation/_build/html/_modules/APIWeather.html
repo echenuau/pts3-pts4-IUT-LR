@@ -40,7 +40,8 @@
 
 <div class="viewcode-block" id="APIWeather"><a class="viewcode-back" href="../APIWeather.html#APIWeather.APIWeather">[docs]</a><span class="k">class</span> <span class="nc">APIWeather</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;This class calls the API&quot;&quot;&quot;</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">longi</span><span class="p">,</span> <span class="n">latt</span><span class="p">):</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Inits the class.</span>
 
@@ -55,8 +56,9 @@
 <span class="sd">			**Authors of this class :**ELOY Tyfenn.\n  </span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">apiKey</span> <span class="o">=</span> <span class="s2">&quot;5848ff07bb54b0148626562ffda70065&quot;</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="n">latt</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">lon</span> <span class="o">=</span> <span class="n">longi</span>
+		<span class="n">coordinate</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">getLocation</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lat</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lon</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://api.openweathermap.org/data/2.5/weather?lat=</span><span class="si">{}</span><span class="s1">&amp;lon=</span><span class="si">{}</span><span class="s1">&amp;appid=</span><span class="si">{}</span><span class="s1">&amp;units=metric&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">apiKey</span><span class="p">)</span>
 		<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">lastData</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
@@ -72,17 +74,20 @@
 <div class="viewcode-block" id="APIWeather.isAPIRested"><a class="viewcode-back" href="../APIWeather.html#APIWeather.APIWeather.isAPIRested">[docs]</a>	<span class="k">def</span> <span class="nf">isAPIRested</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Checks if the api is &quot;rested&quot; it is rested if more than x second passed since it&#39;s last sucessfull call (defined by secIntervall)</span>
+
+<span class="sd">			:return: Boolean: Api rested</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">curTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 		<span class="k">if</span> <span class="n">curTime</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastTime</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">secIntervall</span> <span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">lastTime</span> <span class="o">=</span> <span class="n">curTime</span>
-			<span class="k">return</span> <span class="mi">1</span>
+			<span class="k">return</span> <span class="kc">True</span>
 		<span class="k">else</span><span class="p">:</span> 
-			<span class="k">return</span> <span class="mi">0</span></div>
+			<span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="APIWeather.callAPI"><a class="viewcode-back" href="../APIWeather.html#APIWeather.APIWeather.callAPI">[docs]</a>	<span class="k">def</span> <span class="nf">callAPI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">			Calls the api from OpenWeather </span>
+<span class="sd">			Calls the api from OpenWeather</span>
+
 <span class="sd">			:return: dict: Data structure of the request</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
@@ -92,49 +97,52 @@
 <div class="viewcode-block" id="APIWeather.getWeather"><a class="viewcode-back" href="../APIWeather.html#APIWeather.APIWeather.getWeather">[docs]</a>	<span class="k">def</span> <span class="nf">getWeather</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Return the weather</span>
+
 <span class="sd">			:return: string: Current weather.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isAPIRested</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rested&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isAPIRested</span><span class="p">():</span>
+			<span class="c1">#print(&quot;[APIWeather] rested&quot;)</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callAPI</span><span class="p">()</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;weather&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+			<span class="c1">#print(data[&#39;weather&#39;][0][&#39;description&#39;])</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weather&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastData</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;noRest&quot;</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;weather&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+			<span class="c1">#print(&quot;[APIWeather] noRest&quot;)</span>
+			<span class="c1">#print(data[&#39;weather&#39;][0][&#39;description&#39;])</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;weather&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;description&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="APIWeather.getTemperature"><a class="viewcode-back" href="../APIWeather.html#APIWeather.APIWeather.getTemperature">[docs]</a>	<span class="k">def</span> <span class="nf">getTemperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Return the weather</span>
+
 <span class="sd">			:return: float: Current temperature. (xx.xx)</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isAPIRested</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rested&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isAPIRested</span><span class="p">():</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callAPI</span><span class="p">()</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;temp&#39;</span><span class="p">])</span>
+			<span class="c1">#print(&quot;[APIWeather] rested&quot;)</span>
+			<span class="c1">#print(data[&#39;main&#39;][&#39;temp&#39;])</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;temp&#39;</span><span class="p">]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastData</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;noRest&quot;</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;temp&#39;</span><span class="p">])</span>
+			<span class="c1">#print(&quot;[APIWeather] noRest&quot;)</span>
+			<span class="c1">#print(data[&#39;main&#39;][&#39;temp&#39;])</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;temp&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="APIWeather.getHumidity"><a class="viewcode-back" href="../APIWeather.html#APIWeather.APIWeather.getHumidity">[docs]</a>	<span class="k">def</span> <span class="nf">getHumidity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Return the weather</span>
+
 <span class="sd">			:return: int: Current humidity. (0-100%)</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isAPIRested</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rested&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isAPIRested</span><span class="p">():</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">callAPI</span><span class="p">()</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;humidity&#39;</span><span class="p">])</span>
+			<span class="c1">#print(&quot;[APIWeather] rested&quot;)</span>
+			<span class="c1">#print(data[&#39;main&#39;][&#39;humidity&#39;])</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;humidity&#39;</span><span class="p">]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastData</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;noRest&quot;</span><span class="p">)</span>
-			<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;humidity&#39;</span><span class="p">])</span>
+			<span class="c1">#print(&quot;[APIWeather] noRest&quot;)</span>
+			<span class="c1">#print(data[&#39;main&#39;][&#39;humidity&#39;])</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;main&#39;</span><span class="p">][</span><span class="s1">&#39;humidity&#39;</span><span class="p">]</span></div></div>
 
 </pre></div>

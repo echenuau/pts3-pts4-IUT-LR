@@ -37,7 +37,7 @@
 <span id="apiweather-module"></span><h1>APIWeather module<a class="headerlink" href="#module-APIWeather" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="APIWeather.APIWeather">
-<em class="property">class </em><code class="sig-prename descclassname">APIWeather.</code><code class="sig-name descname">APIWeather</code><span class="sig-paren">(</span><em class="sig-param">longi</em>, <em class="sig-param">latt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">APIWeather.</code><code class="sig-name descname">APIWeather</code><span class="sig-paren">(</span><em class="sig-param">server</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This class calls the API</p>
 <p>Inits the class.</p>
@@ -58,35 +58,56 @@
 <dl class="method">
 <dt id="APIWeather.APIWeather.callAPI">
 <code class="sig-name descname">callAPI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.callAPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.callAPI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls the api from OpenWeather
-:return: dict: Data structure of the request</p>
+<dd><p>Calls the api from OpenWeather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict: Data structure of the request</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="APIWeather.APIWeather.getHumidity">
 <code class="sig-name descname">getHumidity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.getHumidity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.getHumidity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the weather
-:return: int: Current humidity. (0-100%)</p>
+<dd><p>Return the weather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>int: Current humidity. (0-100%)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="APIWeather.APIWeather.getTemperature">
 <code class="sig-name descname">getTemperature</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.getTemperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.getTemperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the weather
-:return: float: Current temperature. (xx.xx)</p>
+<dd><p>Return the weather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>float: Current temperature. (xx.xx)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="APIWeather.APIWeather.getWeather">
 <code class="sig-name descname">getWeather</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.getWeather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.getWeather" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the weather
-:return: string: Current weather.</p>
+<dd><p>Return the weather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string: Current weather.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="APIWeather.APIWeather.isAPIRested">
 <code class="sig-name descname">isAPIRested</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.isAPIRested"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.isAPIRested" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the api is “rested” it is rested if more than x second passed since it’s last sucessfull call (defined by secIntervall)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Boolean: Api rested</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

@@ -37,7 +37,7 @@
 <span id="database-module"></span><h1>Database module<a class="headerlink" href="#module-Database" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Database.Database">
-<em class="property">class </em><code class="sig-prename descclassname">Database.</code><code class="sig-name descname">Database</code><span class="sig-paren">(</span><em class="sig-param">host</em>, <em class="sig-param">dbname</em>, <em class="sig-param">user</em>, <em class="sig-param">password</em>, <em class="sig-param">port</em>, <em class="sig-param">robotSerialNumber</em>, <em class="sig-param">sessionID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">Database.</code><code class="sig-name descname">Database</code><span class="sig-paren">(</span><em class="sig-param">host</em>, <em class="sig-param">dbname</em>, <em class="sig-param">user</em>, <em class="sig-param">password</em>, <em class="sig-param">port</em>, <em class="sig-param">robotSerialNumber</em>, <em class="sig-param">serveurPort</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="Database.Database.endSession">
@@ -59,9 +59,21 @@ We have to call the class weather to obtain the different data and we return all
 </dd></dl>
 
 <dl class="method">
+<dt id="Database.Database.startServer">
+<code class="sig-name descname">startServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.startServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.startServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method start the server for reiceve the location.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="Database.Database.startSession">
 <code class="sig-name descname">startSession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.startSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.startSession" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method format the start date, hour and coordinates and the put them in a POSTGRESQL request that is applicate to the alwaysData Database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.stopServer">
+<code class="sig-name descname">stopServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.stopServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.stopServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method stop the server.</p>
 </dd></dl>
 
 </dd></dl>

@@ -39,6 +39,7 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">Database</span> <span class="k">import</span> <span class="n">Database</span>
 <span class="kn">from</span> <span class="nn">AnalogDigitalConverter</span> <span class="k">import</span> <span class="n">AnalogDigitalConverter</span>
+
 <div class="viewcode-block" id="SensorProcessing"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing">[docs]</a><span class="k">class</span> <span class="nc">SensorProcessing</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Class managing the sensor&#39;s class and the database&#39;s class. </span>
@@ -66,11 +67,13 @@
 		<span class="n">login</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Login&quot;</span><span class="p">)</span>
 		<span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Password&quot;</span><span class="p">)</span>
 		<span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Port&quot;</span><span class="p">)</span>
+		<span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Serial\ number&quot;</span><span class="p">)</span>
+		<span class="n">serverPort</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Server\ port&quot;</span><span class="p">)</span>
 
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">({</span><span class="mf">0.5</span><span class="p">}))</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">analogDigitalConverter</span> <span class="o">=</span> <span class="n">AnalogDigitalConverter</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="n">dbName</span><span class="p">,</span><span class="n">login</span><span class="p">,</span><span class="n">password</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="n">dbName</span><span class="p">,</span><span class="n">login</span><span class="p">,</span><span class="n">password</span><span class="p">,</span><span class="n">port</span><span class="p">,</span><span class="n">robotSerialNumber</span><span class="p">,</span><span class="n">serverPort</span><span class="p">)</span>
 		
 <div class="viewcode-block" id="SensorProcessing.startSession"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.startSession">[docs]</a>	<span class="k">def</span> <span class="nf">startSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -118,7 +121,7 @@
 
 		<span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span>
 		<span class="k">while</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;do_run&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Wheels degree : &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">()))</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SensorProcessing] Wheels degree : &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">()))</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">insertResults</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">())</span>
 			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span></div>
 			
@@ -130,7 +133,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">voltage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analogDigitalConverter</span><span class="o">.</span><span class="n">getFormattedVoltage</span><span class="p">()</span>
-		<span class="nb">print</span><span class="p">(</span><span class="n">voltage</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SensorProcessing] Voltage : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">voltage</span><span class="p">))</span>
 		<span class="n">turns</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Turns&quot;</span><span class="p">))</span>
 		<span class="n">zero</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;0°&quot;</span><span class="p">))</span>
 		<span class="n">ratioMP</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Ratio\ M&amp;P&quot;</span><span class="p">))</span>
@@ -167,6 +170,18 @@
 			<span class="k">if</span><span class="p">(</span><span class="n">matchObj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
 				<span class="k">return</span> <span class="n">matchObj</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 		
+<div class="viewcode-block" id="SensorProcessing.startServer"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.startServer">[docs]</a>	<span class="k">def</span> <span class="nf">startServer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method call server start in Database.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">startServer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SensorProcessing.stopServer"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.stopServer">[docs]</a>	<span class="k">def</span> <span class="nf">stopServer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method call server stop in Database.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">stopServer</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="SensorProcessing.initFileConfiguration"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.initFileConfiguration">[docs]</a>	<span class="k">def</span> <span class="nf">initFileConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">			Allows to create blank file configuration.\n </span>
@@ -213,17 +228,22 @@
 		<span class="c1">#   Ratio M&amp;W: value</span>
 		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Ratio M&amp;W: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-		<span class="c1">#   # ------------------------</span>
-		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # ---------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ---------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 		<span class="c1">#   # | Robot information |</span>
 		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# | Robot information |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-		<span class="c1">#   # ------------------------</span>
-		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # ---------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ---------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 		<span class="c1">#   # The robot&#39;s serial number :</span>
 		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The robot&#39;s serial number :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-		<span class="c1">#   Serial\ number: value</span>
+		<span class="c1">#   Serial number: value</span>
 		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Serial number: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The port number of the server which receives the location data :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The port number of the server which receives the location data :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Server port: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Server port: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
 		<span class="c1">#   # ------------------------</span>
 		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>

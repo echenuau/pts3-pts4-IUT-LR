@@ -6,6 +6,7 @@ import json
 
 class APIWeather(object):
 	"""This class calls the API"""
+
 	def __init__(self, server):
 		"""
 			Inits the class.
@@ -40,7 +41,7 @@ class APIWeather(object):
 		"""
 			Checks if the api is "rested" it is rested if more than x second passed since it's last sucessfull call (defined by secIntervall)
 
-			:return: Boolean: Api rested ?
+			:return: Boolean: Api rested
 		"""
 		curTime = time.time()
 		if curTime > self.lastTime+self.secIntervall :
