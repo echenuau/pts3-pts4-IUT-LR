@@ -20,8 +20,8 @@ class Server(threading.Thread):
 		self.socket.bind(('', self.port))
 		self.connection = None
 		self.location = dict()
-		self.location[0] = 0.
-		self.location[1] = 0.
+		self.location["latitude"] = 0.
+		self.location["longitude"] = 0.
 
 	def run(self):
 		"""
@@ -32,29 +32,30 @@ class Server(threading.Thread):
 		self.socket.listen(5)
 		self.socket.settimeout(1.0)
 
-		print("[Server] : Waiting client...")
+		print("[Server] Waiting client...")
 
 		while self.running:
 			try:
 				self.connection, adresse = self.socket.accept()
-				print("[Server] : Client is connecting.")
+				print("[Server] Client is connecting.")
 				
 				while self.running:
 					data = self.connection.recv(1024)
 					data = data.decode('utf8')
 					if data == "" or data == "Close connection":
-						print("[Server] : Client was disconnected.")
+						print("[Server] Client was disconnected.")
 						self.connection.close()
 						break
 					else:
-						self.location = data.split(";",-1)
+						location = data.split(";",-1)
+						self.location['latitude'] = float(location[0])
+						self.location['longitude'] = float(location[1])
 						#A enlever
-						#print(self.getLocation())
-
+						print("[Server] {}.".format(self.location))
 			except socket.timeout:
 				continue
 			except :
-				print("[Server] : Server is stopping.")
+				print("[Server] Server is stopping.")
 				self.running = False
 					
 
@@ -69,7 +70,7 @@ class Server(threading.Thread):
 		"""
 			This method allows to recover actual location given by client.
 
-			:return: dict(lat,long)
-			lat = latitude of location, long = longitude of location
+			:return: dict(latitude,longitude)
+			latitude = latitude of location, longitude = longitude of location
 		"""
 		return self.location

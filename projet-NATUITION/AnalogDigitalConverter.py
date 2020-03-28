@@ -22,7 +22,7 @@ class AnalogDigitalConverter:
 		self.adc = ADS.ADS1015(self.i2c)
 		
 		if(channel<0 or channel > 3):
-			print("Error, the channel can't be configured (Channel must be between 0 and 3) !")
+			print("[AnalogDigitalConverter] Error, the channel can't be configured (Channel must be between 0 and 3) !")
 			return
 		
 		if(channel==0):

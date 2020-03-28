@@ -5,6 +5,7 @@ import time
 import re
 from Database import Database
 from AnalogDigitalConverter import AnalogDigitalConverter
+
 class SensorProcessing:
 	"""
 		Class managing the sensor's class and the database's class. 
@@ -32,11 +33,13 @@ class SensorProcessing:
 		login = self.getPropertyInFileConfiguration("Login")
 		password = self.getPropertyInFileConfiguration("Password")
 		port = self.getPropertyInFileConfiguration("Port")
+		robotSerialNumber = self.getPropertyInFileConfiguration("Serial\ number")
+		serverPort = self.getPropertyInFileConfiguration("Server\ port")
 
 
 		self.thread = threading.Thread(target=self.loop , args=({0.5}))
 		self.analogDigitalConverter = AnalogDigitalConverter(channel)
-		self.database = Database(host,dbName,login,password,port)
+		self.database = Database(host,dbName,login,password,port,robotSerialNumber,serverPort)
 		
 	def startSession(self):
 		"""
@@ -84,7 +87,7 @@ class SensorProcessing:
 
 		t = threading.currentThread()
 		while getattr(t, "do_run", True):
-			print("Wheels degree : "+str(self.getAngle()))
+			print("[SensorProcessing] Wheels degree : "+str(self.getAngle()))
 			self.database.insertResults(self.getAngle())
 			time.sleep(delay)
 			
@@ -96,7 +99,7 @@ class SensorProcessing:
 		"""
 
 		voltage = self.analogDigitalConverter.getFormattedVoltage()
-		print(voltage)
+		print("[SensorProcessing] Voltage : {}".format(voltage))
 		turns = float(self.getPropertyInFileConfiguration("Turns"))
 		zero = float(self.getPropertyInFileConfiguration("0°"))
 		ratioMP = float(self.getPropertyInFileConfiguration("Ratio\ M&P"))
@@ -133,6 +136,18 @@ class SensorProcessing:
 			if(matchObj is not None):
 				return matchObj.group(1)
 		
+	def startServer(self):
+		"""
+			This method call server start in Database.
+		"""
+		self.database.startServer()
+
+	def stopServer(self):
+		"""
+			This method call server stop in Database.
+		"""
+		self.database.stopServer()
+
 	def initFileConfiguration(self):
 		"""
 			Allows to create blank file configuration.\n 
@@ -179,17 +194,22 @@ class SensorProcessing:
 		#   Ratio M&W: value
 		file.write("Ratio M&W: value\n\n")
 
-		#   # ------------------------
-		file.write("# ------------------------\n")
+		#   # ---------------------
+		file.write("# ---------------------\n")
 		#   # | Robot information |
 		file.write("# | Robot information |\n")
-		#   # ------------------------
-		file.write("# ------------------------\n\n")
+		#   # ---------------------
+		file.write("# ---------------------\n\n")
 
 		#   # The robot's serial number :
 		file.write("# The robot's serial number :\n")
-		#   Serial\ number: value
+		#   Serial number: value
 		file.write("Serial number: value\n\n")
+
+		#   # The port number of the server which receives the location data :
+		file.write("# The port number of the server which receives the location data :\n")
+		#   Server port: value
+		file.write("Server port: value\n\n")
 
 		#   # ------------------------
 		file.write("# ------------------------\n")

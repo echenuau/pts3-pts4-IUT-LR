@@ -18,12 +18,15 @@ Ratio M&P: 3
 # Multiplication ratio between the motor and wheels :
 Ratio M&W: 2.6
 
-# ------------------------
+# ---------------------
 # | Robot information |
-# ------------------------
+# ---------------------
 
 # The robot's serial number :
 Serial number: N189563
+
+# The port number of the server which receives the location data :
+Server port: 4000
 
 # ------------------------
 # | Database information |
