@@ -12,7 +12,8 @@ print("[Main] Server launch, launch client...")
 
 time.sleep(1)
 
-os.system('gnome-terminal -- bash -c "cd emulatorGPS && python MainEmulator.py; bash"')
+#os.system('gnome-terminal -- bash -c "cd emulatorGPS && python MainEmulator.py; bash"')
+os.system('bash -c "cd emulatorGPS && python MainEmulator.py; bash" &')
 
 time.sleep(1)
 
