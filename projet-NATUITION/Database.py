@@ -13,8 +13,26 @@ from Server import Server
 
 
 class Database:
+	"""
+		Class managing the insertion of data in the postgresql database.
+	"""
 	   
 	def __init__(self,host, dbname, user, password, port,robotSerialNumber, serveurPort):
+		"""
+			Inits Database with the host of the database, its name, the database-user name, its password and its port of connexion.\n
+			The roboSerialNumber is optionnal and serveurPort is the connection port of RTK server.\n
+			Create an instance of Server and APIWeather.
+
+			:param host: Path of the database host
+			:param dbname: Name of the database
+			:param user: Name of the user used for the connection to database
+			:param password: Password of the database user
+			:param port: Connection port for the database
+			:param robotSerialNumber: optional, used for init the global variable of the robot serial number
+			:param serveurPort: Connection port of the server that send gps coordinates
+
+			**Authors of this class :** SOULLARD Thomas and TOURNEUR Hugo. \n
+		""" 
 		self.host = host
 		self.dbName = dbname
 		self.user = user
@@ -29,7 +47,12 @@ class Database:
 	def insertRobot(self,serialNumber):
 
 		"""
-		This method obtain the serial number of the robot and send them in the Database by a POSTGRESQL Request
+			Insert a robot's informations in the database. \n
+			This method :
+				* obtain the serial number of the robot,
+				* send it in the Database by a POSTGRESQL Request.
+
+			:param serialNumber: the serial number of a robot.
 		"""
 		
 		#INSERT INTO robot(serial_number) SELECT N189563 WHERE NOT EXISTS (SELECT serial_number FROM robot WHERE serial_number = N189563);
@@ -57,7 +80,11 @@ class Database:
 	def startSession(self):
 
 		"""
-		This method format the start date, hour and coordinates and the put them in a POSTGRESQL request that is applicate to the alwaysData Database.
+			Send to the database the start informations of the robot's session. \n
+			This method : 
+				* format the start date, hour and coordinates,
+				* put them in a POSTGRESQL request,
+				* send them in the database.
 		"""
 
 		now = datetime.now().time()
@@ -93,7 +120,12 @@ class Database:
 
 	def endSession(self):
 		"""
-		This method is useful to complete the Database after the end of a session. It recover the end hour of the session and then use a SQL request to send it in the Database
+			Complete information of a session with the end hour. \n
+			This method :
+				* recover the end hour of a robot session,
+				* format the hour,
+				* put it in a POSTGRESQL request,
+				* send it in the database.
 		"""
 
 		now = datetime.now().time()
@@ -124,8 +156,14 @@ class Database:
 	def insertResults(self,angle):
 		
 		"""
-		This method is the method call for inserting the angle and the weather in the Database table results.  
-		We have to call the class weather to obtain the different data and we return all of this data as results in the DataBase table of the same name.
+			Insert the results of an angle measure on the robot in the database with the actual weather. \n
+			This method :
+				* recover and format the hour of measure,
+				* recover the coordinates where the robot was,
+				* call the APIWeather class to get the weather,
+				* recover the angle measured,
+				* send them in the Database with a POSTGRESQL request.
+			:param angle: the angle measured by the angular captor
 		"""
 
 		weather = self.APIWeather.getWeather()
