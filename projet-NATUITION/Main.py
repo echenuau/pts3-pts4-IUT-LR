@@ -23,7 +23,7 @@ sP.startSession()
 
 
 #For the demonstration 
-time.sleep(4)
+time.sleep(45)
 
 
 #Call the following functions when the robot will be shutdown
