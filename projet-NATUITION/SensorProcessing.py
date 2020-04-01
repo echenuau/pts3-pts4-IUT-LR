@@ -4,8 +4,7 @@ import threading
 import time
 import re
 from Database import Database
-#from AnalogDigitalConverter import AnalogDigitalConverter
-import random
+from AnalogDigitalConverter import AnalogDigitalConverter
 
 class SensorProcessing:
 	"""
@@ -39,7 +38,7 @@ class SensorProcessing:
 
 
 		self.thread = threading.Thread(target=self.loop , args=({0.5}))
-		#self.analogDigitalConverter = AnalogDigitalConverter(channel)
+		self.analogDigitalConverter = AnalogDigitalConverter(channel)
 		self.database = Database(host,dbName,login,password,port,robotSerialNumber,serverPort)
 		
 	def startSession(self):
@@ -98,8 +97,6 @@ class SensorProcessing:
 
 			:return: float: Wheels' angle (in degree), postive degrees : wheels turn right and negative degrees for left.
 		"""
-
-		return 10.
 
 		voltage = self.analogDigitalConverter.getFormattedVoltage()
 		print("[SensorProcessing] Voltage : {}".format(voltage))
