@@ -32,17 +32,21 @@ Server port: 4000
 # | Database information |
 # ------------------------
 
+# postgresql-pts4.alwaysdata.net
 # The host of database :
-Host: postgresql-pts4.alwaysdata.net
+Host: 172.17.0.2
 
 # The port of database :
 Port: 5432
 
+# pts4
 # The name of database user :
-Login: pts4
+Login: postgres
 
+# 13377997
 # The password of database user :
-Password: 13377997
+Password: postgres
 
+# pts4_db
 # The database name :
-Database name: pts4_db
+Database name: fs_gis
