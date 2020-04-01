@@ -34,7 +34,7 @@ Server port: 4000
 
 # postgresql-pts4.alwaysdata.net
 # The host of database :
-Host: 172.17.0.2
+Host: 192.168.1.50
 
 # The port of database :
 Port: 5432
