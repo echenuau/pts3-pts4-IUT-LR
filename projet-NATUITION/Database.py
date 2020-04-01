@@ -9,6 +9,7 @@ import sys
 from psycopg2.extensions import adapt, register_adapter, AsIs
 sys.path.append("./socket/") 
 from Server import Server
+import math
 
 
 
@@ -31,7 +32,7 @@ class Database:
 			:param robotSerialNumber: optional, used for init the global variable of the robot serial number
 			:param serveurPort: Connection port of the server that send gps coordinates
 
-			**Authors of this class :** SOULLARD Thomas and TOURNEUR Hugo. \n
+			**Authors of this class :** SOULLARD Thomas and TOURNEUR Hugo and CHENNUAUD Emmanuel and LAMBERT Vincent. \n
 		""" 
 		self.host = host
 		self.dbName = dbname
@@ -42,6 +43,7 @@ class Database:
 		self.sessionID = None
 		self.server = Server(int(serveurPort))
 		self.APIWeather = APIWeather(self.server)
+		self.lastCoordinate = None
 
 
 	def insertRobot(self,serialNumber):
@@ -163,6 +165,8 @@ class Database:
 				* call the APIWeather class to get the weather,
 				* recover the angle measured,
 				* send them in the Database with a POSTGRESQL request.
+				* calculate the robot orientation vector and send it to database (qgis)
+
 			:param angle: the angle measured by the angular captor
 		"""
 
@@ -170,23 +174,50 @@ class Database:
 		temperature = self.APIWeather.getTemperature()
 		humidity = self.APIWeather.getHumidity()
 		coordinate = self.server.getLocation()
-		coordinateLong = coordinate['latitude']
-		coordinateLat = coordinate['longitude']
+		coordinateLat = coordinate['latitude']
+		coordinateLong = coordinate['longitude']
+		idResultat = None
+		vector_robot_direction = None
+		sql2 = None
+
+
+		if(self.lastCoordinate is not None):
+			latCompass = coordinateLat - self.lastCoordinate['latitude']
+			longCompass = coordinateLong - self.lastCoordinate['longitude']
+			vector_robot_direction = AsIs("'(%s,%s)'" % (longCompass, latCompass))
+
 
 		# A supprimer quand il y aura rtk et weather
 		now = datetime.now().time()
-		coordinate = AsIs("'(%s,%s)'" % (coordinateLat, coordinateLong))
+		coordinateStr = AsIs("'(%s,%s)'" % (coordinateLong, coordinateLat))
 		time_hour = str(now.hour) + ":" + str(now.minute) + ":" + str(now.second)
 
 		sql = """INSERT INTO resultat(angle,coordinates,timer_hour,weather,humidity,temperature,session)
-				VALUES(%s,%s,%s,%s,%s,%s,%s);"""
+				VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id;"""
+
+		if(vector_robot_direction is not None):
+			sql2 = """INSERT INTO qgis(id_resultat,coordinates,angle,session,vector_robot_direction)
+				VALUES(%s,%s,%s,%s,%s);"""
+		else:
+			sql2 = """INSERT INTO qgis(id_resultat,coordinates,angle,session)
+				VALUES(%s,%s,%s,%s);"""
 		try:
 			# connect to the PostgreSQL database
 			conn = psycopg2.connect(dbname=self.dbName, user=self.user, host=self.host, password=self.password)
 			# create a new cursor
 			cur = conn.cursor()
 			# execute the INSERT statement
-			cur.execute(sql, (angle, coordinate, time_hour, weather, humidity, temperature, self.sessionID,))
+			cur.execute(sql, (angle, coordinateStr, time_hour, weather, humidity, temperature, self.sessionID,))
+
+			idResultat = cur.fetchone()[0]
+
+			conn.commit()
+
+			if(vector_robot_direction is not None):
+				cur.execute(sql2, (idResultat,coordinateStr, angle, self.sessionID,vector_robot_direction,))
+			else:
+				cur.execute(sql2, (idResultat,coordinateStr, angle, self.sessionID,))
+
 			# commit the changes to the database
 			conn.commit()
 			# close communication with the database
@@ -197,6 +228,8 @@ class Database:
 		finally:
 			if conn is not None:
 				conn.close()
+
+		self.lastCoordinate = dict(coordinate)
 
 	def startServer(self):
 		"""
