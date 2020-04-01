@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>APIWeather module &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cacheXML module" href="cacheXML.html" />
+    <link rel="prev" title="Server module" href="Server.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-APIWeather">
+<span id="apiweather-module"></span><h1>APIWeather module<a class="headerlink" href="#module-APIWeather" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="APIWeather.APIWeather">
+<em class="property">class </em><code class="sig-prename descclassname">APIWeather.</code><code class="sig-name descname">APIWeather</code><span class="sig-paren">(</span><em class="sig-param">server</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class calls the API</p>
+<p>Inits the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>apiKey</strong> – The key used to call the api.</p></li>
+<li><p><strong>latt</strong> – latitude of the curent location</p></li>
+<li><p><strong>longi</strong> – longitude of the curent location</p></li>
+<li><p><strong>url</strong> – formated url which will call the api</p></li>
+<li><p><strong>lastData</strong> – last data received by the api</p></li>
+<li><p><strong>lastTime</strong> – Last time since the api was sucessfully called (seconds since epoch)</p></li>
+<li><p><strong>secIntervall</strong> – Seconds to pass between each sucessfull call of the api</p></li>
+</ul>
+</dd>
+</dl>
+<p><a href="#id1"><span class="problematic" id="id2">**</span></a>Authors of this class :<a href="#id3"><span class="problematic" id="id4">**</span></a>ELOY Tyfenn.</p>
+<dl class="method">
+<dt id="APIWeather.APIWeather.callAPI">
+<code class="sig-name descname">callAPI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.callAPI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.callAPI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the api from OpenWeather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict: Data structure of the request</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="APIWeather.APIWeather.getHumidity">
+<code class="sig-name descname">getHumidity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.getHumidity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.getHumidity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the weather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>int: Current humidity. (0-100%)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="APIWeather.APIWeather.getTemperature">
+<code class="sig-name descname">getTemperature</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.getTemperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.getTemperature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the weather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>float: Current temperature. (xx.xx)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="APIWeather.APIWeather.getWeather">
+<code class="sig-name descname">getWeather</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.getWeather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.getWeather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the weather</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string: Current weather.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="APIWeather.APIWeather.isAPIRested">
+<code class="sig-name descname">isAPIRested</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.isAPIRested"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.isAPIRested" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the api is “rested” it is rested if more than x second passed since it’s last sucessfull call (defined by secIntervall)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Boolean: Api rested</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="APIWeather.APIWeather.strAll">
+<code class="sig-name descname">strAll</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/APIWeather.html#APIWeather.strAll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#APIWeather.APIWeather.strAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>A to string function which show when was the api called last time and the last data received</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">projet-NATUITION</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalogDigitalConverter.html">AnalogDigitalConverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Database.html">Database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SensorProcessing.html">SensorProcessing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="EmulateGPS.html">EmulateGPS module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client.html">Client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Server.html">Server module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">APIWeather module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cacheXML.html">cacheXML module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">projet-NATUITION</a><ul>
+      <li>Previous: <a href="Server.html" title="previous chapter">Server module</a></li>
+      <li>Next: <a href="cacheXML.html" title="next chapter">cacheXML module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENUAUD Emmanuel, ELOY Tyfenn, LAMBERT Vincent, TOURNEUR Hugo, SOULLARD Thomas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/APIWeather.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

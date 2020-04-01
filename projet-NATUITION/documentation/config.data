@@ -16,37 +16,33 @@ Turns: 1
 # Multiplication ratio between the motor and the potentiometer :
 Ratio M&P: 3
 # Multiplication ratio between the motor and wheels :
-Ratio M&W: 2.6
+Ratio M&W: 3.6
 
-# ---------------------
-# | Robot information |
-# ---------------------
+# ------------------------
+# | Customer information |
+# ------------------------
 
-# The robot's serial number :
-Serial number: N189563
+# The customer's name :
+Name: value
 
-# The port number of the server which receives the location data :
-Server port: 4000
+# The customer's surname :
+Surname: value
 
 # ------------------------
 # | Database information |
 # ------------------------
 
-# postgresql-pts4.alwaysdata.net
 # The host of database :
-Host: 192.168.1.50
+Host: value
 
 # The port of database :
-Port: 5432
+Port: value
 
-# pts4
 # The name of database user :
-Login: postgres
+Login: value
 
-# 13377997
 # The password of database user :
-Password: postgres
+Password: value
 
-# pts4_db
 # The database name :
-Database name: fs_gis
+Database name: value

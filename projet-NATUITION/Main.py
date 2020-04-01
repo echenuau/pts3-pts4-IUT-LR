@@ -1,19 +1,35 @@
 import time
 import os
 from SensorProcessing import SensorProcessing
-from AnalogDigitalConverter import AnalogDigitalConverter
 
-adc0 = AnalogDigitalConverter(0)
-
-
+#When the robot is turning on execute these functions
+#----------------------------------
 path = os.path.abspath(os.getcwd())
 
-sP = SensorProcessing(path,adc0)
+sP = SensorProcessing(path,0)
 
-print("Démarrage de la session.")
+sP.startServer()
+
+print("[Main] Server launch, launch client...")
+
+os.system('bash -c "cd emulatorGPS && python MainEmulator.py; bash" &')
+#time for client laaunch and connection to server for RTK coordinate
+time.sleep(0.5)
+
+print("[Main] Start of the session")
 sP.startSession()
+#----------------------------------
 
-time.sleep(10)
 
-print("Arrêt de la session.")
+
+#For the demonstration 
+time.sleep(45)
+
+
+#Call the following functions when the robot will be shutdown
+#----------------------------------
+print("[Main] Termination of the session.")
 sP.endSession()
+
+sP.stopServer()
+#----------------------------------

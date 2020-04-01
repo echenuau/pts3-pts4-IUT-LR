@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>SensorProcessing &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for SensorProcessing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">Database</span> <span class="k">import</span> <span class="n">Database</span>
+<span class="kn">from</span> <span class="nn">AnalogDigitalConverter</span> <span class="k">import</span> <span class="n">AnalogDigitalConverter</span>
+
+<div class="viewcode-block" id="SensorProcessing"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing">[docs]</a><span class="k">class</span> <span class="nc">SensorProcessing</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Class managing the sensor&#39;s class and the database&#39;s class. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+		
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pathConfig</span><span class="p">,</span><span class="n">channel</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Inits SensorProcessing with path of the configuration file.\n</span>
+<span class="sd">			Create an instance of AnalogDigitalConverter, Database and thread.\n</span>
+<span class="sd">			And if configuration file doesn&#39;t exist he create it.</span>
+
+<span class="sd">			:param pathConfig: Path of the configuration file.    </span>
+<span class="sd">			:param channel: Channel number where the potentiometer is connected [0|1|2].</span>
+<span class="sd">			</span>
+<span class="sd">			**Authors of this class :** CHENUAUD Emmanuel and LAMBERT Vincent.\n  </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">pathConfig</span> <span class="o">=</span> <span class="n">pathConfig</span> <span class="o">+</span> <span class="s1">&#39;/config.data&#39;</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pathConfig</span><span class="p">)):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">initFileConfiguration</span><span class="p">()</span>
+
+		<span class="n">host</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Host&quot;</span><span class="p">)</span>
+		<span class="n">dbName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Database\ name&quot;</span><span class="p">)</span>
+		<span class="n">login</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Login&quot;</span><span class="p">)</span>
+		<span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Password&quot;</span><span class="p">)</span>
+		<span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Port&quot;</span><span class="p">)</span>
+		<span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Serial\ number&quot;</span><span class="p">)</span>
+		<span class="n">serverPort</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Server\ port&quot;</span><span class="p">)</span>
+
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">({</span><span class="mf">0.5</span><span class="p">}))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">analogDigitalConverter</span> <span class="o">=</span> <span class="n">AnalogDigitalConverter</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">Database</span><span class="p">(</span><span class="n">host</span><span class="p">,</span><span class="n">dbName</span><span class="p">,</span><span class="n">login</span><span class="p">,</span><span class="n">password</span><span class="p">,</span><span class="n">port</span><span class="p">,</span><span class="n">robotSerialNumber</span><span class="p">,</span><span class="n">serverPort</span><span class="p">)</span>
+		
+<div class="viewcode-block" id="SensorProcessing.startSession"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.startSession">[docs]</a>	<span class="k">def</span> <span class="nf">startSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Lauch robot session.\n</span>
+<span class="sd">			This method :</span>
+<span class="sd">				* create in database the robot if doesn&#39;t exist,</span>
+<span class="sd">				* start session in Database,</span>
+<span class="sd">				* start the thread.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Serial\ number&quot;</span><span class="p">)</span>
+
+		<span class="c1">#insertRobot() of Database class</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">insertRobot</span><span class="p">(</span><span class="n">robotSerialNumber</span><span class="p">)</span>
+		
+		<span class="c1">#startSession() of Database class</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">startSession</span><span class="p">()</span>
+		
+		<span class="c1">#startThread</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+		
+<div class="viewcode-block" id="SensorProcessing.endSession"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.endSession">[docs]</a>	<span class="k">def</span> <span class="nf">endSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Stop robot session.\n    </span>
+<span class="sd">			This method :</span>
+<span class="sd">				* stop session in Database,</span>
+<span class="sd">				* stop the thread.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="c1">#stopThread</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">do_run</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+		
+		<span class="c1">#endSession() of Database class</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">endSession</span><span class="p">()</span></div>
+		
+<div class="viewcode-block" id="SensorProcessing.loop"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.loop">[docs]</a>	<span class="k">def</span> <span class="nf">loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">delay</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Loop of robot&#39;s thread.    </span>
+
+<span class="sd">			:param delay: Waiting time between each iteration (in millisecond). </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span>
+		<span class="k">while</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;do_run&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SensorProcessing] Wheels degree : &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">()))</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">insertResults</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getAngle</span><span class="p">())</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span></div>
+			
+<div class="viewcode-block" id="SensorProcessing.getAngle"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.getAngle">[docs]</a>	<span class="k">def</span> <span class="nf">getAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Allows to recover the value of wheels&#39; angle (in degree).   </span>
+
+<span class="sd">			:return: float: Wheels&#39; angle (in degree), postive degrees : wheels turn right and negative degrees for left.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">voltage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analogDigitalConverter</span><span class="o">.</span><span class="n">getFormattedVoltage</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[SensorProcessing] Voltage : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">voltage</span><span class="p">))</span>
+		<span class="n">turns</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Turns&quot;</span><span class="p">))</span>
+		<span class="n">zero</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;0°&quot;</span><span class="p">))</span>
+		<span class="n">ratioMP</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Ratio\ M&amp;P&quot;</span><span class="p">))</span>
+		<span class="n">ratioMW</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Ratio\ M&amp;W&quot;</span><span class="p">))</span>
+		<span class="n">reference</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getPropertyInFileConfiguration</span><span class="p">(</span><span class="s2">&quot;Reference&quot;</span><span class="p">))</span>
+		
+		<span class="n">voltageSigne</span> <span class="o">=</span> <span class="p">(</span><span class="n">voltage</span> <span class="o">-</span> <span class="n">zero</span><span class="p">)</span>
+		
+		<span class="n">minusDegree</span> <span class="o">=</span> <span class="n">zero</span> <span class="o">/</span> <span class="p">(</span><span class="mi">180</span><span class="o">*</span><span class="n">turns</span><span class="p">)</span>
+		<span class="n">plusDegree</span> <span class="o">=</span> <span class="p">(</span><span class="n">reference</span><span class="o">-</span><span class="n">zero</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">180</span><span class="o">*</span><span class="n">turns</span><span class="p">)</span>
+		
+		<span class="n">potentiometreDegree</span> <span class="o">=</span> <span class="n">voltageSigne</span><span class="o">/</span><span class="n">plusDegree</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">voltageSigne</span> <span class="o">&lt;</span> <span class="n">zero</span><span class="p">):</span>
+			<span class="n">potentiometreDegree</span> <span class="o">=</span> <span class="n">voltageSigne</span><span class="o">/</span><span class="n">minusDegree</span>
+						
+		<span class="n">motorDegree</span> <span class="o">=</span> <span class="n">potentiometreDegree</span> <span class="o">/</span> <span class="n">ratioMP</span>
+		<span class="n">wheelsDegree</span> <span class="o">=</span> <span class="n">motorDegree</span> <span class="o">/</span> <span class="n">ratioMW</span>
+
+		<span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">wheelsDegree</span><span class="p">))</span></div>
+		
+<div class="viewcode-block" id="SensorProcessing.getPropertyInFileConfiguration"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.getPropertyInFileConfiguration">[docs]</a>	<span class="k">def</span> <span class="nf">getPropertyInFileConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Allows to recover a value of property in file configuration.</span>
+
+<span class="sd">			:param name: Name of property in file configuration.</span>
+
+<span class="sd">			:return: str: Property value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+		<span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pathConfig</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+		<span class="n">reg</span> <span class="o">=</span> <span class="s1">&#39;^&#39;</span><span class="o">+</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;:\ (.*)&#39;</span>
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+			<span class="n">matchObj</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span> <span class="n">reg</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">X</span><span class="o">|</span><span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">matchObj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">matchObj</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+		
+<div class="viewcode-block" id="SensorProcessing.startServer"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.startServer">[docs]</a>	<span class="k">def</span> <span class="nf">startServer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method call server start in Database.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">startServer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SensorProcessing.stopServer"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.stopServer">[docs]</a>	<span class="k">def</span> <span class="nf">stopServer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method call server stop in Database.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">stopServer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SensorProcessing.initFileConfiguration"><a class="viewcode-back" href="../SensorProcessing.html#SensorProcessing.SensorProcessing.initFileConfiguration">[docs]</a>	<span class="k">def</span> <span class="nf">initFileConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Allows to create blank file configuration.\n </span>
+<span class="sd">			Fields with the value &#39;value&#39; must be completed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+		<span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pathConfig</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+		
+		<span class="c1">#   # --------------------------------------------------------------------------------------------------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# --------------------------------------------------------------------------------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # | Configuration file for the purple robot retrieving the steering angle project and saving it to a database. |</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# | Configuration file for the purple robot retrieving the steering angle project and saving it to a database. |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # | To comment in this file use &#39;#&#39;.                                                                           |</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# | To comment in this file use &#39;#&#39;.                                                                           |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # --------------------------------------------------------------------------------------------------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# --------------------------------------------------------------------------------------------------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+		<span class="c1">#   # ------------------------------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # | Analog digital converter configuration |</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# | Analog digital converter configuration |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # ------------------------------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The voltage in volt of the zero angle :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The voltage in volt of the zero angle :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   0°: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;0°: value</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # Potentiometer reference voltage :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Potentiometer reference voltage :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Reference: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Reference: value</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # Maximum number of turns that the potentiometer can make :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Maximum number of turns that the potentiometer can make :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Turns: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Turns: value</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # Multiplication ratio between the motor and the potentiometer :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Multiplication ratio between the motor and the potentiometer :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Ratio M&amp;P: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Ratio M&amp;P: value</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # Multiplication ratio between the motor and wheels :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# Multiplication ratio between the motor and wheels :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Ratio M&amp;W: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Ratio M&amp;W: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # ---------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ---------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # | Robot information |</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# | Robot information |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # ---------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ---------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The robot&#39;s serial number :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The robot&#39;s serial number :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Serial number: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Serial number: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The port number of the server which receives the location data :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The port number of the server which receives the location data :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Server port: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Server port: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # ------------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # | Database information |</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# | Database information |</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   # ------------------------</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# ------------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The host of database :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The host of database :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Host: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Host: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		
+		<span class="c1">#   # The port of database :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The port of database :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Port: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Port: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The name of database user :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The name of database user :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Login: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Login: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="c1">#   # The password of database user :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The password of database user :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Password: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Password: value</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		
+		<span class="c1">#   # The database name :</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;# The database name :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="c1">#   Database name: value</span>
+		<span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Database name: value</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+		<span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> </div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">projet-NATUITION</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENUAUD Emmanuel, ELOY Tyfenn, LAMBERT Vincent, TOURNEUR Hugo, SOULLARD Thomas.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
