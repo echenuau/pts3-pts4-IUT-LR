@@ -19,7 +19,7 @@ To install and be able to use your project please follow the instructions below 
 
 ``` 
 git clone https://forge.iut-larochelle.fr/echenuau/pts3-pts4.git 
-cd pts3-pts4/projet-NATUITION/ 
+cd pts3-pts4/src/ 
 python3 -m venv .env
 source .env/bin/activate 
 pip3 install adafruit-circuitpython-ads1x15
