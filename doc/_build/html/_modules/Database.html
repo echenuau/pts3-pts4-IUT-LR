@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Database &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for Database</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">APIWeather</span> <span class="k">import</span> <span class="n">APIWeather</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">sys</span> 
+<span class="kn">from</span> <span class="nn">psycopg2.extensions</span> <span class="k">import</span> <span class="n">adapt</span><span class="p">,</span> <span class="n">register_adapter</span><span class="p">,</span> <span class="n">AsIs</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;./socket/&quot;</span><span class="p">)</span> 
+<span class="kn">from</span> <span class="nn">Server</span> <span class="k">import</span> <span class="n">Server</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+
+<div class="viewcode-block" id="Database"><a class="viewcode-back" href="../Database.html#Database.Database">[docs]</a><span class="k">class</span> <span class="nc">Database</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Class managing the insertion of data in the postgresql database.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	   
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">host</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span><span class="n">robotSerialNumber</span><span class="p">,</span> <span class="n">serveurPort</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Inits Database with the host of the database, its name, the database-user name, its password and its port of connexion.\n</span>
+<span class="sd">			The roboSerialNumber is optionnal and serveurPort is the connection port of RTK server.\n</span>
+<span class="sd">			Create an instance of Server and APIWeather.</span>
+
+<span class="sd">			:param host: Path of the database host</span>
+<span class="sd">			:param dbname: Name of the database</span>
+<span class="sd">			:param user: Name of the user used for the connection to database</span>
+<span class="sd">			:param password: Password of the database user</span>
+<span class="sd">			:param port: Connection port for the database</span>
+<span class="sd">			:param robotSerialNumber: optional, used for init the global variable of the robot serial number</span>
+<span class="sd">			:param serveurPort: Connection port of the server that send gps coordinates</span>
+
+<span class="sd">			**Authors of this class :** SOULLARD Thomas and TOURNEUR Hugo and CHENNUAUD Emmanuel and LAMBERT Vincent. \n</span>
+<span class="sd">		&quot;&quot;&quot;</span> 
+		<span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dbName</span> <span class="o">=</span> <span class="n">dbname</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">robotSerialNumber</span> <span class="o">=</span> <span class="n">robotSerialNumber</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">serveurPort</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">APIWeather</span> <span class="o">=</span> <span class="n">APIWeather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lastCoordinate</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="Database.insertRobot"><a class="viewcode-back" href="../Database.html#Database.Database.insertRobot">[docs]</a>	<span class="k">def</span> <span class="nf">insertRobot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">serialNumber</span><span class="p">):</span>
+
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Insert a robot&#39;s informations in the database. \n</span>
+<span class="sd">			This method :</span>
+<span class="sd">				* obtain the serial number of the robot,</span>
+<span class="sd">				* send it in the Database by a POSTGRESQL Request.</span>
+
+<span class="sd">			:param serialNumber: the serial number of a robot.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		
+		<span class="c1">#INSERT INTO robot(serial_number) SELECT N189563 WHERE NOT EXISTS (SELECT serial_number FROM robot WHERE serial_number = N189563);</span>
+
+		<span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;INSERT INTO robot(serial_number) SELECT </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1"> WHERE NOT EXISTS (SELECT serial_number FROM robot WHERE serial_number = </span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1">);&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">robotSerialNumber</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">robotSerialNumber</span><span class="p">)</span>
+		<span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="c1"># connect to the PostgreSQL database</span>
+			<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbName</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+			<span class="c1"># create a new cursor</span>
+			<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+			<span class="c1"># execute the INSERT statement</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+			<span class="c1"># commit the changes to the database</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="c1"># close communication with the database</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">except</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span><span class="n">psycopg2</span><span class="o">.</span><span class="n">DatabaseError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Database]&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+		<span class="k">finally</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Database.startSession"><a class="viewcode-back" href="../Database.html#Database.Database.startSession">[docs]</a>	<span class="k">def</span> <span class="nf">startSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Send to the database the start informations of the robot&#39;s session. \n</span>
+<span class="sd">			This method : </span>
+<span class="sd">				* format the start date, hour and coordinates,</span>
+<span class="sd">				* put them in a POSTGRESQL request,</span>
+<span class="sd">				* send them in the database.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="n">DateSession</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+		<span class="n">Begin_Hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+		<span class="n">coordinate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">getLocation</span><span class="p">()</span>
+		<span class="n">coordinateLong</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+		<span class="n">coordinateLat</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+		<span class="n">Start_Position</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coordinateLat</span><span class="p">,</span><span class="n">coordinateLong</span><span class="p">))</span>
+		<span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;INSERT INTO &quot;session&quot;(date,Start_Position,Begin_Hour,robot)</span>
+<span class="s2">				VALUES(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">) RETURNING id&quot;&quot;&quot;</span>
+
+		<span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="c1"># connect to the PostgreSQL database</span>
+			<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbName</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+			<span class="c1"># create a new cursor</span>
+			<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+			<span class="c1"># execute the INSERT statement</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">DateSession</span><span class="p">,</span> <span class="n">Start_Position</span><span class="p">,</span> <span class="n">Begin_Hour</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">robotSerialNumber</span><span class="p">))</span>
+			<span class="c1"># get the generated id back</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="c1"># commit the changes to the database</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="c1"># close communication with the database</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">except</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">DatabaseError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Database]&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+		<span class="k">finally</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Database.endSession"><a class="viewcode-back" href="../Database.html#Database.Database.endSession">[docs]</a>	<span class="k">def</span> <span class="nf">endSession</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Complete information of a session with the end hour. \n</span>
+<span class="sd">			This method :</span>
+<span class="sd">				* recover the end hour of a robot session,</span>
+<span class="sd">				* format the hour,</span>
+<span class="sd">				* put it in a POSTGRESQL request,</span>
+<span class="sd">				* send it in the database.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="n">End_Hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+
+		<span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;UPDATE session</span>
+<span class="s2">				SET End_Hour = </span><span class="si">%s</span><span class="s2"></span>
+<span class="s2">				WHERE id = </span><span class="si">%s</span><span class="s2">&quot;&quot;&quot;</span>
+		<span class="n">conn</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="c1"># connect to the PostgreSQL database</span>
+			<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbName</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+			<span class="c1"># create a new cursor</span>
+			<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+			<span class="c1"># execute the INSERT statement</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">End_Hour</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span><span class="p">))</span>
+			<span class="c1"># commit the changes to the database</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="c1"># close communication with the database</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">except</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">DatabaseError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Database]&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+		<span class="k">finally</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Database.insertResults"><a class="viewcode-back" href="../Database.html#Database.Database.insertResults">[docs]</a>	<span class="k">def</span> <span class="nf">insertResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">angle</span><span class="p">):</span>
+		
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Insert the results of an angle measure on the robot in the database with the actual weather. \n</span>
+<span class="sd">			This method :</span>
+<span class="sd">				* recover and format the hour of measure,</span>
+<span class="sd">				* recover the coordinates where the robot was,</span>
+<span class="sd">				* call the APIWeather class to get the weather,</span>
+<span class="sd">				* recover the angle measured,</span>
+<span class="sd">				* send them in the Database with a POSTGRESQL request.</span>
+<span class="sd">				* calculate the robot orientation vector and send it to database (qgis)</span>
+
+<span class="sd">			:param angle: the angle measured by the angular captor</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="n">weather</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">APIWeather</span><span class="o">.</span><span class="n">getWeather</span><span class="p">()</span>
+		<span class="n">temperature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">APIWeather</span><span class="o">.</span><span class="n">getTemperature</span><span class="p">()</span>
+		<span class="n">humidity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">APIWeather</span><span class="o">.</span><span class="n">getHumidity</span><span class="p">()</span>
+		<span class="n">coordinate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">getLocation</span><span class="p">()</span>
+		<span class="n">coordinateLat</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+		<span class="n">coordinateLong</span> <span class="o">=</span> <span class="n">coordinate</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+		<span class="n">idResultat</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="n">vector_robot_direction</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="n">sql2</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+		<span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lastCoordinate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+			<span class="n">latCompass</span> <span class="o">=</span> <span class="n">coordinateLat</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastCoordinate</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">]</span>
+			<span class="n">longCompass</span> <span class="o">=</span> <span class="n">coordinateLong</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastCoordinate</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">]</span>
+			<span class="n">vector_robot_direction</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">longCompass</span><span class="p">,</span> <span class="n">latCompass</span><span class="p">))</span>
+
+
+		<span class="c1"># A supprimer quand il y aura rtk et weather</span>
+		<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="n">coordinateStr</span> <span class="o">=</span> <span class="n">AsIs</span><span class="p">(</span><span class="s2">&quot;&#39;(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coordinateLong</span><span class="p">,</span> <span class="n">coordinateLat</span><span class="p">))</span>
+		<span class="n">time_hour</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+
+		<span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;INSERT INTO resultat(angle,coordinates,timer_hour,weather,humidity,temperature,session)</span>
+<span class="s2">				VALUES(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">) RETURNING id;&quot;&quot;&quot;</span>
+
+		<span class="k">if</span><span class="p">(</span><span class="n">vector_robot_direction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+			<span class="n">sql2</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;INSERT INTO qgis(id_resultat,coordinates,angle,session,vector_robot_direction)</span>
+<span class="s2">				VALUES(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">);&quot;&quot;&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">sql2</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;INSERT INTO qgis(id_resultat,coordinates,angle,session)</span>
+<span class="s2">				VALUES(</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">);&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="c1"># connect to the PostgreSQL database</span>
+			<span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">dbname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dbName</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+			<span class="c1"># create a new cursor</span>
+			<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+			<span class="c1"># execute the INSERT statement</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">coordinateStr</span><span class="p">,</span> <span class="n">time_hour</span><span class="p">,</span> <span class="n">weather</span><span class="p">,</span> <span class="n">humidity</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span><span class="p">,))</span>
+
+			<span class="n">idResultat</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+			<span class="k">if</span><span class="p">(</span><span class="n">vector_robot_direction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+				<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql2</span><span class="p">,</span> <span class="p">(</span><span class="n">idResultat</span><span class="p">,</span><span class="n">coordinateStr</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span><span class="p">,</span><span class="n">vector_robot_direction</span><span class="p">,))</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql2</span><span class="p">,</span> <span class="p">(</span><span class="n">idResultat</span><span class="p">,</span><span class="n">coordinateStr</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessionID</span><span class="p">,))</span>
+
+			<span class="c1"># commit the changes to the database</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="c1"># close communication with the database</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">except</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">DatabaseError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Database]&quot;</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+		<span class="k">finally</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">conn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">lastCoordinate</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Database.startServer"><a class="viewcode-back" href="../Database.html#Database.Database.startServer">[docs]</a>	<span class="k">def</span> <span class="nf">startServer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method start the server for reiceve the location.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Database.stopServer"><a class="viewcode-back" href="../Database.html#Database.Database.stopServer">[docs]</a>	<span class="k">def</span> <span class="nf">stopServer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method stop the server.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div></div>
+
+
+<span class="c1">#print(&quot;[Database] Test&quot;)</span>
+<span class="c1">#db = Database(&quot;postgresql-pts4.alwaysdata.net&quot;,&quot;pts4_db&quot;,&quot;pts4&quot;,&quot;13377997&quot;,&quot;5432&quot;,&quot;&quot;,0)</span>
+<span class="c1">#var=&quot;N24632&quot;</span>
+<span class="c1">#db.insertRobot(var)</span>
+<span class="c1">#db.startSession()</span>
+<span class="c1">#db.endSession()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
