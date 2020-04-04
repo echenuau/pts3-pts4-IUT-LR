@@ -2,7 +2,7 @@
 
 **Made by CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.**
 
-Tutored project following work by UIT Informatique students for the NATUITUION company. The purpose of this project is to be able to collect information on the direction of a robot thanks to its gps position and send it to a postgres database.
+Tutored project following work by computer science UIT students for the NATUITUION company. The purpose of this project is to be able to collect information on the direction of a robot thanks to its gps position and send it to a postgres database.
 
 ## Installation & Dependencies
 This driver depends on:
