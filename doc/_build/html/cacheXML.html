@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cacheXML module &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="APIWeather module" href="APIWeather.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cacheXML">
+<span id="cachexml-module"></span><h1>cacheXML module<a class="headerlink" href="#module-cacheXML" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cacheXML.cacheXML">
+<em class="property">class </em><code class="sig-prename descclassname">cacheXML.</code><code class="sig-name descname">cacheXML</code><a class="reference internal" href="_modules/cacheXML.html#cacheXML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cacheXML.cacheXML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class put given data in a XML cache file</p>
+<p>Class constructor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> – The root element of the xml tree used in cacheResult()</p></li>
+<li><p><strong>latt</strong> – The root element of the xml tree used in cacheResultSol2()</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Authors of this class :</strong> ELOY Tyfenn.</p>
+<dl class="method">
+<dt id="cacheXML.cacheXML.cacheResult">
+<code class="sig-name descname">cacheResult</code><span class="sig-paren">(</span><em class="sig-param">anAngle</em>, <em class="sig-param">aCoordinates</em>, <em class="sig-param">aTimer_hour</em>, <em class="sig-param">aWeather</em>, <em class="sig-param">aHumidity</em>, <em class="sig-param">aTemperature</em>, <em class="sig-param">aSession</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cacheXML.html#cacheXML.cacheResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cacheXML.cacheXML.cacheResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outdated
+Create a XML tree where each result is an element composed of other children element (heavier but more redable). Write result in /cache/result.xml</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cacheXML.cacheXML.cacheResultSol2">
+<code class="sig-name descname">cacheResultSol2</code><span class="sig-paren">(</span><em class="sig-param">anAngle</em>, <em class="sig-param">aCoordinates</em>, <em class="sig-param">aTimer_hour</em>, <em class="sig-param">aWeather</em>, <em class="sig-param">aHumidity</em>, <em class="sig-param">aTemperature</em>, <em class="sig-param">aSession</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cacheXML.html#cacheXML.cacheResultSol2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cacheXML.cacheXML.cacheResultSol2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a XML tree where each result is an element defined by the 7 attributes inserted in batabase (lighter but more difficult to read). Write result in /cache/result.xml</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cacheXML.cacheXML.prettify">
+<code class="sig-name descname">prettify</code><span class="sig-paren">(</span><em class="sig-param">element</em>, <em class="sig-param">indent='  '</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cacheXML.html#cacheXML.prettify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cacheXML.cacheXML.prettify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cacheXML.cacheXML.readCache">
+<code class="sig-name descname">readCache</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/cacheXML.html#cacheXML.readCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cacheXML.cacheXML.readCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all the elements in /cache/result.xml and returns it in a dict {LineNumber:{‘angle’: ‘0’, ‘coordinates’: ‘0’,’timer_hour’: ‘0’, ‘weather’: ‘0’, ‘humidity’: ‘0’, ‘temperature’: ‘0’, ‘session’: ‘0’}}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict: Data structure of the request</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalogDigitalConverter.html">AnalogDigitalConverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SensorProcessing.html">SensorProcessing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Database.html">Database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="EmulateGPS.html">EmulateGPS module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Server.html">Server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client.html">Client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="APIWeather.html">APIWeather module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cacheXML module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="APIWeather.html" title="previous chapter">APIWeather module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/cacheXML.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

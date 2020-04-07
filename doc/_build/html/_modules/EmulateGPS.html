@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>EmulateGPS &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for EmulateGPS</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="EmulateGPS"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS">[docs]</a><span></span><span class="k">class</span> <span class="nc">EmulateGPS</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This class emulate a route between UIT of La Rochelle and Natuition&#39;s office.\n</span>
+<span class="sd">		This route is composed by one thousand point. One point is defiend by a latitude and a longitude.\n</span>
+<span class="sd">		This class has to be used to test inserting potentiometer results in database whitout use the robot.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method initialize the route parameters : </span>
+<span class="sd">				* start point of route,</span>
+<span class="sd">				* end point of route.</span>
+
+<span class="sd">			These values can be modified to create other routes (it&#39;s useless).</span>
+
+<span class="sd">			**Authors of this class :** CHENUAUD Emmanuel.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span> <span class="o">=</span> <span class="mf">46.141993</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.151800</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">latitude_end</span> <span class="o">=</span> <span class="mf">46.154292</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">longitude_end</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.118223</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">curr_latitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">curr_longitude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">calculateCoeff</span><span class="p">()</span>				
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="EmulateGPS.calculateCoeff"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS.calculateCoeff">[docs]</a>	<span class="k">def</span> <span class="nf">calculateCoeff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method calculates spacing between two route points for routes composed by one thousand points :</span>
+<span class="sd">				* latitude coefficient,</span>
+<span class="sd">				* longitude coefficient.</span>
+
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">coef_latitude</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude_end</span><span class="p">)</span><span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span><span class="p">))</span><span class="o">/</span><span class="mi">1000</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">coef_longitude</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude_end</span><span class="p">)</span><span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span><span class="p">))</span><span class="o">/</span><span class="mi">1000</span></div>
+
+<div class="viewcode-block" id="EmulateGPS.getLatitude"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS.getLatitude">[docs]</a>	<span class="k">def</span> <span class="nf">getLatitude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Get the latitude of current point.</span>
+
+<span class="sd">			:return: float: The latitude of current point.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude_end</span> <span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">curr_latitude</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_latitude</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">curr_latitude</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_latitude</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_latitude</span></div>
+
+<div class="viewcode-block" id="EmulateGPS.getLongitude"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS.getLongitude">[docs]</a>	<span class="k">def</span> <span class="nf">getLongitude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Get the longitude of current point.</span>
+
+<span class="sd">			:return: float: The longitude of current point.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude_end</span> <span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">curr_longitude</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_longitude</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">curr_longitude</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_longitude</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">countIncrement</span><span class="p">()</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">curr_longitude</span></div>
+
+<div class="viewcode-block" id="EmulateGPS.countIncrement"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS.countIncrement">[docs]</a>	<span class="k">def</span> <span class="nf">countIncrement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method increments the position on the route by one.\n</span>
+<span class="sd">			Don&#39;t use it method. It&#39;s already used in getLongitude().</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="EmulateGPS.getLatitude_N"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS.getLatitude_N">[docs]</a>	<span class="k">def</span> <span class="nf">getLatitude_N</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Get the latitude of the N-th point in the route.</span>
+
+<span class="sd">			:param N: The latitude of targeted point.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">latitude_end</span><span class="p">:</span>
+			<span class="n">latitudeN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span> <span class="o">+</span> <span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_latitude</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">latitudeN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latitude_start</span> <span class="o">-</span> <span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_latitude</span>
+		<span class="k">return</span> <span class="n">latitudeN</span></div>
+
+<div class="viewcode-block" id="EmulateGPS.getLongitude_N"><a class="viewcode-back" href="../EmulateGPS.html#EmulateGPS.EmulateGPS.getLongitude_N">[docs]</a>	<span class="k">def</span> <span class="nf">getLongitude_N</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">N</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Get the longitude of the N-th point in the route.</span>
+
+<span class="sd">			:param N: The longitude of targeted point.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">longitude_end</span><span class="p">:</span>
+			<span class="n">longitudeN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span> <span class="o">+</span> <span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_longitude</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">longitudeN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">longitude_start</span> <span class="o">-</span> <span class="n">N</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">coef_longitude</span>
+		<span class="k">return</span> <span class="n">longitudeN</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

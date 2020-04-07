@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Database module &#8212; Natuition  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="EmulateGPS module" href="EmulateGPS.html" />
+    <link rel="prev" title="SensorProcessing module" href="SensorProcessing.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-Database">
+<span id="database-module"></span><h1>Database module<a class="headerlink" href="#module-Database" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Database.Database">
+<em class="property">class </em><code class="sig-prename descclassname">Database.</code><code class="sig-name descname">Database</code><span class="sig-paren">(</span><em class="sig-param">host</em>, <em class="sig-param">dbname</em>, <em class="sig-param">user</em>, <em class="sig-param">password</em>, <em class="sig-param">port</em>, <em class="sig-param">robotSerialNumber</em>, <em class="sig-param">serveurPort</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class managing the insertion of data in the postgresql database.</p>
+<p>Inits Database with the host of the database, its name, the database-user name, its password and its port of connexion.</p>
+<p>The roboSerialNumber is optionnal and serveurPort is the connection port of RTK server.</p>
+<p>Create an instance of Server and APIWeather.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> – Path of the database host</p></li>
+<li><p><strong>dbname</strong> – Name of the database</p></li>
+<li><p><strong>user</strong> – Name of the user used for the connection to database</p></li>
+<li><p><strong>password</strong> – Password of the database user</p></li>
+<li><p><strong>port</strong> – Connection port for the database</p></li>
+<li><p><strong>robotSerialNumber</strong> – optional, used for init the global variable of the robot serial number</p></li>
+<li><p><strong>serveurPort</strong> – Connection port of the server that send gps coordinates</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Authors of this class :</strong> SOULLARD Thomas and TOURNEUR Hugo and CHENNUAUD Emmanuel and LAMBERT Vincent.</p>
+<dl class="method">
+<dt id="Database.Database.endSession">
+<code class="sig-name descname">endSession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.endSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.endSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete information of a session with the end hour.</p>
+<dl class="simple">
+<dt>This method :</dt><dd><ul class="simple">
+<li><p>recover the end hour of a robot session,</p></li>
+<li><p>format the hour,</p></li>
+<li><p>put it in a POSTGRESQL request,</p></li>
+<li><p>send it in the database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.insertResults">
+<code class="sig-name descname">insertResults</code><span class="sig-paren">(</span><em class="sig-param">angle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.insertResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.insertResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert the results of an angle measure on the robot in the database with the actual weather.</p>
+<dl class="simple">
+<dt>This method :</dt><dd><ul class="simple">
+<li><p>recover and format the hour of measure,</p></li>
+<li><p>recover the coordinates where the robot was,</p></li>
+<li><p>call the APIWeather class to get the weather,</p></li>
+<li><p>recover the angle measured,</p></li>
+<li><p>send them in the Database with a POSTGRESQL request.</p></li>
+<li><p>calculate the robot orientation vector and send it to database (qgis)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>angle</strong> – the angle measured by the angular captor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.insertRobot">
+<code class="sig-name descname">insertRobot</code><span class="sig-paren">(</span><em class="sig-param">serialNumber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.insertRobot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.insertRobot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a robot’s informations in the database.</p>
+<dl class="simple">
+<dt>This method :</dt><dd><ul class="simple">
+<li><p>obtain the serial number of the robot,</p></li>
+<li><p>send it in the Database by a POSTGRESQL Request.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>serialNumber</strong> – the serial number of a robot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.startServer">
+<code class="sig-name descname">startServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.startServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.startServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method start the server for reiceve the location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.startSession">
+<code class="sig-name descname">startSession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.startSession"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.startSession" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send to the database the start informations of the robot’s session.</p>
+<dl class="simple">
+<dt>This method :</dt><dd><ul class="simple">
+<li><p>format the start date, hour and coordinates,</p></li>
+<li><p>put them in a POSTGRESQL request,</p></li>
+<li><p>send them in the database.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Database.Database.stopServer">
+<code class="sig-name descname">stopServer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Database.html#Database.stopServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Database.Database.stopServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method stop the server.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Natuition</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="AnalogDigitalConverter.html">AnalogDigitalConverter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SensorProcessing.html">SensorProcessing module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Database module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="EmulateGPS.html">EmulateGPS module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Server.html">Server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client.html">Client module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="APIWeather.html">APIWeather module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cacheXML.html">cacheXML module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+      <li>Previous: <a href="SensorProcessing.html" title="previous chapter">SensorProcessing module</a></li>
+      <li>Next: <a href="EmulateGPS.html" title="next chapter">EmulateGPS module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/Database.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
