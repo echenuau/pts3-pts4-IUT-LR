@@ -1,6 +1,6 @@
 ## Introduction
 
-**Made by CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.**
+<em>**Made by CHENNAUD Emmanuel, ELOY Typhenn, LAMBERT Vincent, SOULLARD Thomas, TOURNEUR Hugo.**</em>
 
 Tutored project following work by computer science UIT students for the NATUITUION company. The purpose of this project is to be able to collect information on the direction of a robot thanks to its gps position and send it to a postgres database.
 
